@@ -20,14 +20,14 @@
  BioPar.NH4_0 = 0; 		% In mmolN/m3  
  BioPar.Si_0 = 136;  		% In mmolSi/m3  
  BioPar.PO4_0 = 16.3;  		% In mmolP/m3  
- BioPar.Fe_0 = 1;  		% In mmolFe/m3  
+ BioPar.Fe_0 = 1e-1; 	  	% In mmolFe/m3  
  % Biological pools:
  BioPar.DiN_0 = 5.5;
  BioPar.DiFe_0 = 4.3e-5;
  BioPar.DiChl_0 = 0.8;
  BioPar.DiSi_0 = 5.5;
- BioPar.DON_0 = 0.00;
- BioPar.DOFe_0 = 0.00;
+ BioPar.DON_0 = 0.001;
+ BioPar.DOFe_0 = 0.0;
  BioPar.PON_0 = 0.00;
  BioPar.POFe_0 = 0.00;
  BioPar.PSi_0 = 0.00;
@@ -97,7 +97,7 @@
  BioPar.rPOM = 0.05/d2h;			% DON remineral. rate 1/d
 
  % Fe scavenging parameters
- BioPar.rScFe0 = 1/12/(y2d*d2h);		% Baseline Fe-specific scavenging rate (1.2%/year)
+ BioPar.rScFe0 = 0.12/(y2d*d2h);		% Baseline Fe-specific scavenging rate (12%/year = 12%/(24*365h))
  BioPar.PONRef = 2e-3 * BioPar.rNC;		% POC reference for Fe scavenging, converted to N
  BioPar.FeMaxScale = 3;				% Maximum PON scaling factor for Fe scavenging
  

@@ -201,17 +201,21 @@
  % Note: only 10% of scavenged Fe goes to particles, the rest is assumed lost forever (sediments)
  rScFe = bio.rScFe0 * min( var.PON/bio.PONRef, bio.FeMaxScale);
  % Increase scaveging rate at high Fe, above 0.6nM
+ % Note: converts BEC hard-coded parameters from per year to per hours
  if var.Fe > 0.6e-3
-    rScFe = rScFe + (var.Fe - 0.6e-3)/1.4e-3 * 6.0;
+   %rScFe = rScFe + (var.Fe - 0.6e-3)/(1.4e-3) * 6.0;
+    rScFe = rScFe + (var.Fe - 0.6e-3)/(1.4e-3) * 6.0/(24*365);
  end
  % Decrease scaveging rate linearly before 0.5nM
+ % Note: converts BEC hard-coded parameters from per year to per hours
  if var.Fe < 0.5e-3
-    rScFe = rScFe * var.Fe/0.5e-3;
+    rScFe = rScFe * var.Fe/(0.5e-3);
  end
  % Get the scavenging flux from the specific rate
  JScFe = rScFe * var.Fe;
+
  %%%%%%%%% WARNING -- SCAVENGING DOESNT WORK -- SET TO 0 FOR NOW!
- JScFe = 0;
+%JScFe = 0;
  % Grazing sources of Fe to the dissolved pool
  % (here assumes zooplankton have always less Fe:N ratios than diatoms, 
  %  so excess grazing goes to dissolved Fe)
@@ -271,7 +275,7 @@
  dNH4dt = - JNH4Di + JNH4Lys + JNH4Grz + JNH4DON + JNH4PON;
  dPO4dt = bio.rPN * (- JPhotoDi + JNH4DON + JRemPON + JNH4Lys + JNH4Grz);
  dSidt = - gQSiNDi * JPhotoDi + JSiGrz + JSiLys + JRemPSi;  
- dFedt = - gQFeNDi * JPhotoDi + JRemDOFe + QFeNDi * (JNH4Lys + JNH4Grz) + JGrzDiFe - JScFe;
+ dFedt = - gQFeNDi * JPhotoDi + JRemDOFe + JRemPOFe + QFeNDi * (JNH4Lys + JNH4Grz) + JGrzDiFe - JScFe;
  % Diatoms
  dDiNdt = JPhotoDi - (JGrzDi + JLysDi + JAggDi);
  dDiFedt = gQFeNDi * JPhotoDi - QFeNDi * (JGrzDi + JLysDi + JAggDi);
