@@ -120,6 +120,7 @@
  % Aggregation
  % Takes the minimum of a quadratic and linear terms
  JAggDi = max( bio.tAggDiMin*PPDiN , min( bio.tAggDiMax*PPDiN , bio.lMort2Di*PPDiN*PPDiN ) ); 
+ JAggDi = 0;
  % Grazing
  JGrzDi = 0;
  % Partition grazing to different components
@@ -267,9 +268,32 @@
  % NOTE : POP and DOP are not represented, because the assumption is Redfield
  % (this needs to be relaxed if diazotrophs are included
 
+ %%%%%%%%%%%%%%%%%%%%%
+ % DA production & loss
+ %%%%%%%%%%%%%%%%%%%%%
+ % Assumes DA production is proportional to phytosynthesis (N-based)
+ % according to a parameter "alpha" that is a function of nutrient limitation
+ % First gets the smallest of the nutrient (other than N) limitation factors, which
+ % will control DA production
+ NutLimDA = min([vDiPO4, vDiFe, vDiSi]);
+ alpha = bio.beta * (1 - min(NutLimDA/(vDiNO3+vDiNH4),1))^bio.gamma;  
+ DiDAprod = alpha * JPhotoDi;
+ % Losses: partition all Diatom losses accroding to the diatom DA:N ratios
+ % First get the DA:N ratio in livign diatoms:
+ QDADiN = var.DiDA/var.DiN;
+ DiDAloss = QDADiN * (JLysDi + JAggDi + JGrzDi);
+ % Sources fro particulate and dissolved DA
+ % Adds together lysis, aggregation, grazing terms, partioning to dissolved and particulate:
+ PDAprod = QDADiN * (JLysDiPON + JAggDi + JGrzDiPON); 
+ DDAprod = QDADiN * (JLysDiDON + JLysDiDIN + JGrzDiDON + JGrzDiDIN);
+ % Losses by remineralization 
+ PDAloss = bio.rPOM * var.PDA;
+ DDAloss = bio.rDOM * var.DDA;
+
  %-----------------------------------------------------------
  % Final source and sink terms
- % 'NO3','NH4','Si','PO4','Fe','DiN','DiFe','DiChl','DiSi','DON','DOFe','PON','POFe','PSi'
+ % 'NO3','NH4','Si','PO4','Fe','DiN','DiFe','DiChl','DiSi', ...
+ % 'DON','DOFe','PON','POFe','PSi','DiDA','DDA','PDA'
  % Dissolved Inorganic Nutrients
  dNO3dt = - JNO3Di;
  dNH4dt = - JNH4Di + JNH4Lys + JNH4Grz + JNH4DON + JNH4PON;
@@ -288,7 +312,10 @@
  dPONdt = JProdPON - JRemPON;
  dPOFedt = JProdPOFe - JRemPOFe;
  dPSidt = JProdPSi - JRemPSi;
-
+ % DA production
+ dDiDAdt = DiDAprod - DiDAloss;
+ dDDAdt  = DDAprod  - DDAloss;
+ dPDAdt  = PDAprod  - PDAloss;
  %-----------------------------------------------------------
  % Lumps SMS terms into a single vector
  sms = [dNO3dt; ...
@@ -305,5 +332,8 @@
         dPONdt; ...
         dPOFedt; ...
         dPSidt; ...
-       ];
+        dDiDAdt;...
+        dDDAdt;...
+        dPDAdt;...
+        ];
 

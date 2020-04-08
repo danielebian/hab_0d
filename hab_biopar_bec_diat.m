@@ -11,7 +11,8 @@
  BioPar.varnames = {'NO3','NH4','Si','PO4','Fe', ...
                     'DiN','DiFe','DiChl','DiSi', ... 
                     'DON','DOFe', ...
-                    'PON','POFe','PSi'};
+                    'PON','POFe','PSi', ...
+                    'DiDA','DDA','PDA'};
  BioPar.nvar = length(BioPar.varnames);
 
  % Model variables: set initial values
@@ -31,6 +32,9 @@
  BioPar.PON_0 = 0.00;
  BioPar.POFe_0 = 0.00;
  BioPar.PSi_0 = 0.00;
+ BioPar.DiDA_0 = 0;
+ BioPar.DDA_0 = 0;
+ BioPar.PDA_0 = 0;
  
  % For the chemostat or mixed layer case, set up input values for all tracers
  % (typically, specify nutrients and set all biological terms to 0)
@@ -49,11 +53,14 @@
  BioPar.PON_in = 0;
  BioPar.POFe_in = 0;
  BioPar.PSi_in = 0;
+ BioPar.DiDA_in = 0;
+ BioPar.DDA_in = 0;
+ BioPar.PDA_in = 0;
 
  % Constants
  y2d = 365;
  d2h = 24;
-
+ 
  % Light attenuation by phytoplankton
  kcPAR = 0.03;   		% atten. coeff. per unit chlorophyll (1/m/(mg Chl/m^3))
  
@@ -90,7 +97,7 @@
  BioPar.tAggDiMin = 0 * 0.01/d2h;			% 1/day
  BioPar.tAggDiMax = 0 * 0.75/d2h;			% 1/day
  BioPar.bGrzThres = 0.02 * BioPar.rNC;		% mmolN/m3 
-
+ 
  % Detritus parameters
  BioPar.fLab = 0.7;				% fraction of diat. lysis going to inorganic fraction
  BioPar.rDOM = 0.01/d2h;			% DON remineral. rate 1/d
@@ -100,6 +107,10 @@
  BioPar.rScFe0 = 0.12/(y2d*d2h);		% Baseline Fe-specific scavenging rate (12%/year = 12%/(24*365h))
  BioPar.PONRef = 2e-3 * BioPar.rNC;		% POC reference for Fe scavenging, converted to N
  BioPar.FeMaxScale = 3;				% Maximum PON scaling factor for Fe scavenging
+
+ % Domoic Acid cycle parameters
+ BioPar.beta = 0.1*BioPar.rNC;	% Max DA production stoichiomery (DA:N ratio for photo) 
+ BioPar.gamma = 2.0;		% Exponent for DA production (in nutrient limitation term)
  
  %--------------------------------------------------------------------------------
  % Here performs any substitution of default parameters based on user input (varargin)
