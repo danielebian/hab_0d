@@ -21,7 +21,8 @@
 
  % Biological module
  %hab.BioModule = 'anderson';
-  hab.BioModule = 'terseleer';
+ %hab.BioModule = 'terseleer';
+  hab.BioModule = 'bec_diat';
 
  % Experimental setup
   hab.ExpModule = 'batch';
@@ -58,6 +59,8 @@
     hab = hab_biopar_anders(hab,arg_BioPar{:});
  case 'terseleer'
     hab = hab_biopar_tersel(hab,arg_BioPar{:});
+ case 'bec_diat'
+    hab = hab_biopar_bec_diat(hab,arg_BioPar{:});
  otherwise
     error(['Crazy town! (biological case not found)']);
  end

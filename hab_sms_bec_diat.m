@@ -120,7 +120,7 @@
  % Aggregation
  % Takes the minimum of a quadratic and linear terms
  JAggDi = max( bio.tAggDiMin*PPDiN , min( bio.tAggDiMax*PPDiN , bio.lMort2Di*PPDiN*PPDiN ) ); 
- JAggDi = 0;
+%JAggDi = 0;
  % Grazing
  JGrzDi = 0;
  % Partition grazing to different components
@@ -215,7 +215,7 @@
  % Get the scavenging flux from the specific rate
  JScFe = rScFe * var.Fe;
 
- %%%%%%%%% WARNING -- SCAVENGING DOESNT WORK -- SET TO 0 FOR NOW!
+ %%%%%%%%% WARNING - The following line sets scavenging to zero, if needed
 %JScFe = 0;
  % Grazing sources of Fe to the dissolved pool
  % (here assumes zooplankton have always less Fe:N ratios than diatoms, 

@@ -93,9 +93,9 @@
 
  % Losses parameters
  BioPar.lMortDi = 0.15/d2h;			% 1/day
- BioPar.lMort2Di = 0 * 0.0035/BioPar.rNC/d2h;	% 1/mmolC/m3/day
- BioPar.tAggDiMin = 0 * 0.01/d2h;			% 1/day
- BioPar.tAggDiMax = 0 * 0.75/d2h;			% 1/day
+ BioPar.lMort2Di = 1 * 0.0035/BioPar.rNC/d2h;	% 1/mmolC/m3/day
+ BioPar.tAggDiMin = 1 * 0.01/d2h;			% 1/day
+ BioPar.tAggDiMax = 1 * 0.75/d2h;			% 1/day
  BioPar.bGrzThres = 0.02 * BioPar.rNC;		% mmolN/m3 
  
  % Detritus parameters

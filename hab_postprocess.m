@@ -28,6 +28,8 @@
     % Based on Terseller includes only finctional C mass and intracellular DA
     hab.Sol.PNN = hab.Sol.PNF * hab.BioPar.rNC + hab.Sol.pDA * hab.BioPar.rNCDA;
  case 'bec_diat'
+    hab.Sol.pDA = hab.Sol.DiDA + hab.Sol.PDA;           % Sums diatom and particulate DA to get total
+    hab.Sol.dDA = hab.Sol.DDA;           		% Just uses DDA (N units)
   otherwise
     error(['Crazy town! (Processing not found)']);
  end

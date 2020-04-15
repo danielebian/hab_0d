@@ -30,6 +30,5 @@
     % Fill in model resampled values
     data_resamp.(data.var{indv}).mod = mod_var_resamp;
 
-
  end
 
