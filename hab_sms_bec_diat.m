@@ -1,4 +1,4 @@
- function sms = hab_sms_tersel(hab,Var,EnvVar)
+ function sms = hab_sms_bec_diat(hab,Var,EnvVar)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HAB_0D SMS for Anderson's model
 % Versions: 0.1 : D. Bianchi, A. Moreno, 11-13-2019

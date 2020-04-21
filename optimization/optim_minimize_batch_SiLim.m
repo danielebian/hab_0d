@@ -1,4 +1,4 @@
- function tcost = hab_minimizing_function(ParStart,FunArg)
+ function tcost = optim_minimize_batch_SiLim(ParStart,FunArg)
 
  tt = tic;
   
@@ -25,7 +25,7 @@
   hab.BioModule = 'bec_diat';
 
  % Experimental setup
-  hab.ExpModule = 'batch';
+ hab.ExpModule = 'batch';
  %hab.ExpModule = 'chemostat';
  %hab.ExpModule = 'mixed_layer';
 
@@ -34,7 +34,8 @@
  % (use ['property',value] format)
  % NOTE: these should be variables not used as Suite Parameters
  new_BioPar = {};
- new_SetUp = {'dt',0.05};
+ new_SetUp = {};
+ % new_SetUp = {'dt',0.05};
 
  %---------------------
  % Here, creates the input arguments for bio module and experiment setup
@@ -81,7 +82,7 @@
  hab = hab_integrate(hab);
  % Postprocess the result
  hab = hab_postprocess(hab);
-
+ 
  %---------------------
  % Calculates the cost function
  

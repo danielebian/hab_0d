@@ -1,4 +1,4 @@
- function hab = hab_biopar_tersel(hab,varargin)
+ function hab = hab_biopar_bec_diat(hab,varargin)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HAB_0D initialization of biologial parameters
 % Versions: 0.1 : D. Bianchi, A. Moreno, 11-13-2019
@@ -75,7 +75,7 @@
  BioPar.rFeNzoo = 2.5*1e-6 / BioPar.rNC;	% Zooplankton stoichiometric ratio for PN Fe:N 
 
  % Rate constants - units should be in hours
- BioPar.muMaxDi = 0.75/d2h;		% 1/day Max phyto C specific growth rate at Tref=10C
+ BioPar.muMaxDi = 0.0214;%0.75/d2h;		% 1/day Max phyto C specific growth rate at Tref=10C
  BioPar.Q10 = 2;			% T-dependence of growth rates
 
  % Half saturation constants
@@ -86,16 +86,16 @@
  BioPar.KSi = 1.0;		% half sat constant for nut uptake mmol/m3
 
  % Light dependence
- BioPar.aLightDi = 0.3 * BioPar.rNC/d2h;	% mmol N /(mg Chl W/m2 day)
+ BioPar.aLightDi = 0.0012; %0.3 * BioPar.rNC/d2h;	% mmol N /(mg Chl W/m2 day)
  
  % Photoacclimation parameters
- BioPar.QNChlDi = 4;			% mgChl/mmolN
+ BioPar.QNChlDi = 8;%4;			% mgChl/mmolN
 
  % Losses parameters
- BioPar.lMortDi = 0.15/d2h;			% 1/day
- BioPar.lMort2Di = 1 * 0.0035/BioPar.rNC/d2h;	% 1/mmolC/m3/day
- BioPar.tAggDiMin = 1 * 0.01/d2h;			% 1/day
- BioPar.tAggDiMax = 1 * 0.75/d2h;			% 1/day
+ BioPar.lMortDi = 0.0124; %0.15/d2h;			% 1/day
+ BioPar.lMort2Di = 0 * 0.0035/BioPar.rNC/d2h;	% 1/mmolC/m3/day
+ BioPar.tAggDiMin = 0 * 0.01/d2h;			% 1/day
+ BioPar.tAggDiMax = 0 * 0.75/d2h;			% 1/day
  BioPar.bGrzThres = 0.02 * BioPar.rNC;		% mmolN/m3 
  
  % Detritus parameters
@@ -109,8 +109,8 @@
  BioPar.FeMaxScale = 3;				% Maximum PON scaling factor for Fe scavenging
 
  % Domoic Acid cycle parameters
- BioPar.beta = 0.1*BioPar.rNC;	% Max DA production stoichiomery (DA:N ratio for photo) 
- BioPar.gamma = 2.0;		% Exponent for DA production (in nutrient limitation term)
+ BioPar.beta = 0.0111; %0.1*BioPar.rNC;	% Max DA production stoichiomery (DA:N ratio for photo) 
+ BioPar.gamma = 1.0104; %2.0;		% Exponent for DA production (in nutrient limitation term)
  
  %--------------------------------------------------------------------------------
  % Here performs any substitution of default parameters based on user input (varargin)
