@@ -60,7 +60,7 @@
     % Note that since ML is well-mixed, the attenuation coefficient is
     % constant with depth, only PAR and PAR-dependent terms vary in the ML
     % Here uses BEC light attenuation coefficients and formulation
-    kPAR = hab.SetUp.kwPAR + bio.kcPAR * var.DiChl;
+    kPAR = hab.SetUp.kwPAR + hab.SetUp.kcPAR * var.DiChl;
     %-----------------------
     % 2. Estimates light in the water column on a vertical grid between [0,MLD]
     zPAR = linspace(0,evar.MLD,hab.SetUp.nzPAR);

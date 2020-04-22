@@ -36,7 +36,7 @@
 
  for indt=2:ntime
     % Uncomment this for run-time display of current time-step
-    %fprintf(['Integration time step #' num2str(indt) '/' num2str(ntime) '\n']);
+    fprintf(['Integration time step #' num2str(indt) '/' num2str(ntime) '\n']);
  
     % Calculates the sources minus sink terms, using the state variables
     % at the previous time step, and all model parameters
