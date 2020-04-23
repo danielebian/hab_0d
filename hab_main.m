@@ -18,17 +18,17 @@
  % 'anderson' : Clarissa Anderson simple PN/DA model
  % 'terseleer' : Terseleer Based on 2013 Paper
  %hab.BioModule = 'anderson';
- %hab.BioModule = 'terseleer';
-  hab.BioModule = 'bec_diat';
+ hab.BioModule = 'terseleer';
+%   hab.BioModule = 'bec_diat';
 
  % Experimental setup
  % Options:
  % 'batch' : models a batch culture
  % 'chemostat' : models a chemostat setup
  % 'mixed_layer' : models a mixed layer setup
-  hab.ExpModule = 'batch';
+%   hab.ExpModule = 'batch';
  %hab.ExpModule = 'chemostat';
- %hab.ExpModule = 'mixed_layer';
+ hab.ExpModule = 'mixed_layer';
 
  % Here, if needed, overrides default parameters for BioModules and SetUp
  % The experiment will adopt these parameters, overriding defaults

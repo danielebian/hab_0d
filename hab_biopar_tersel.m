@@ -11,29 +11,29 @@
  BioPar.varnames = {'PNF','PNS','PNR','pDA','dDA','NO3','Si','PO4'};
  BioPar.nvar = length(BioPar.varnames);
 
- % Model variables: set initial values
- BioPar.PNF_0 = 27.5;		% In mmolC/m3  
- BioPar.PNS_0 = 27.5*0.57;	% In mmolC/m3  
- BioPar.PNR_0 = 27.5*0.75; 	% In mmolC/m3  
- BioPar.pDA_0 = 0.009;		% In mmolC/m3  
+% Model variables: set initial values
+ BioPar.PNF_0 = 1;          % In mmolC/m3  
+ BioPar.PNS_0 = 1;  		% In mmolC/m3  
+ BioPar.PNR_0 = 1;  		% In mmolC/m3  
+ BioPar.pDA_0 = 0;  		% In mmolC/m3  
  BioPar.dDA_0 = 0;  		% In mmolC/m3  
- BioPar.NO3_0 = 974; 		% In mmolN/m3  
- BioPar.Si_0 = 136;  		% In mmolSi/m3  
- BioPar.PO4_0 = 16.3;  		% In mmolP/m3  
+ BioPar.NO3_0 = 980;  		% In mmolN/m3  
+ BioPar.Si_0 = 132;  		% In mmolSi/m3  
+ BioPar.PO4_0 = 16;  		% In mmolP/m3  
 %BioPar.NO3_0 = 16;  		% In mmolN/m3  
 %BioPar.Si_0 = 16;  		% In mmolSi/m3  
 %BioPar.PO4_0 = 1;  		% In mmolP/m3  
 
  % For the chemostat or mixed layer case, set up input values for all tracers
  % (typically, specify nutrients and set all biological terms to 0)
- BioPar.PNF_in = 0;		% In mmolC/m3  
+ BioPar.PNF_in = 0;              % In mmolC/m3  
  BioPar.PNS_in = 0;  		% In mmolC/m3  
  BioPar.PNR_in = 0;  		% In mmolC/m3  
- BioPar.pDA_in = 0;		% In mmolC/m3  
+ BioPar.pDA_in = 0;  		% In mmolC/m3  
  BioPar.dDA_in = 0;  		% In mmolC/m3  
- BioPar.NO3_in = 0; 		% In mmolN/m3  
- BioPar.Si_in = 0;  		% In mmolSi/m3  
- BioPar.PO4_in = 0;  		% In mmolP/m3  
+ BioPar.NO3_in = 16; 		% In mmolN/m3  
+ BioPar.Si_in = 16;  		% In mmolSi/m3  
+ BioPar.PO4_in = 1;  		% In mmolP/m3  
 
  % Constants
  BioPar.alpha = 0.001;		% Photosynt. efficiency [1/h * 1/(umol/m2/s)]
