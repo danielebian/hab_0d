@@ -36,7 +36,7 @@
  % (leave an empty cell array {} for default)
  new_BioPar = {};
  % new_BioPar = {'NO3_0',16,'Si_0',16,'PO4_0',1};
- new_SetUp = {'dt',0.05};
+ new_SetUp = {};
 
  % Initialize biological parameters
  switch hab.BioModule
@@ -73,7 +73,8 @@
  if (iplot)
     switch hab.BioModule
     case 'anderson'
-       hab_plot_anders(hab); %Plot model
+      %hab_plot_anders(hab); %Plot model
+       hab_plot_all(hab); %Plot model
     case 'terseleer'
       %hab_plot_tersel(hab); %Plot model
        hab_plot_all(hab); %Plot model

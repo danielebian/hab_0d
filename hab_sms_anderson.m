@@ -38,13 +38,14 @@
  Siupt = growth * bio.rSiC;
 
  % Final source and sink terms
+ % Variables: 'PN','pDA','dDA','NO3','Si'
+ dNdt = - Nupt;
+ dSidt = - Siupt;
  dPNdt = growth - mort;
  dpDAdt = DAprod - DAloss;
  ddDAdt = DAloss; 
- dNdt = - Nupt;
- dSidt = - Siupt;
 
  % Lumps SMS terms into a single vector
- sms = [dPNdt;dpDAdt;ddDAdt;dNdt;dSidt];
+ sms = [dNdt;dSidt;dPNdt;dpDAdt;ddDAdt];
 
 
