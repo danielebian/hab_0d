@@ -15,19 +15,21 @@
  %-------------------------------
  % General setup
  SetUp.StartTime = 0*24;	% Duration of batch culture (hours)
- SetUp.EndTime = 30*24;	% Duration of batch culture (hours)
+ SetUp.EndTime = 50*24;	% Duration of batch culture (hours)
  SetUp.dt = 0.1;		% timestep (hours)
 
  %-------------------------------
  % Chemostat setup
  SetUp.Vol = 1;			% Volume of the culture (m3)
- SetUp.Flow = 1 * 0.3391/24;	% Flow rate in the chemostat (m3/h)
+ SetUp.Flow = 1 * 0.18/24;	% Flow rate in the chemostat (m3/h)
 
  %-------------------------------
  % Define the type and properties of light forcing
  SetUp.iLight = 1;	% Case (1) : constant light
 			% Case (2) : 12:12 light:darkness cycles
- SetUp.MaxPAR = 60;  	% Photosynthetially Available Radiation umol/m2/s  
+ SetUp.MaxPAR = 60/4.6;	% Photosynthetially Available Radiation (W/m2)
+			% Note this is converted to umol/m2/s in terseleer case  
+                        % Note: 1 W/m2 ≈ 4.6 μmole.m2/s;     
 
  %-------------------------------
  % Define the type and properties of light forcing

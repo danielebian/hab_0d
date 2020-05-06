@@ -1,4 +1,4 @@
- function tcost = hab_minimizing_function(ParStart,FunArg)
+ function tcost = optim_minimize_batch_SiLim(ParStart,FunArg)
 
  tt = tic;
   

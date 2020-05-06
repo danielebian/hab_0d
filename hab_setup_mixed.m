@@ -32,42 +32,50 @@
 
  %-------------------------------
  % Define the type and properties of surface light forcing
- SetUp.iLight = 3;	% 1: Constant light 
+ SetUp.iLight = 4;	% 1: Constant light 
 			% 2: 12:12 light:darkness cycles
-			% 3: Idealized annual cycle
+			% 3: Idealized annual cycle (mid-high latitudes)
+			% 4: Observed cycle (California Current)
  % Parameters:
- SetUp.MaxPAR = 120;  	% Max PAR for cases 1,2
+ SetUp.MaxPAR = 120;  	% (iLight=1,2) Max PAR 
 			% PAR: Photosynthetially Available Radiation umol/m2/s 
  % For case 3, Idealized annual cycle:
- SetUp.day_min_PAR = 355;	% Day of the year with minimum light (e.g. Dec. 21st)
- SetUp.PAR_min = 60;	% Photosynthetially Available Radiation umol/m2/s   
- SetUp.PAR_max = 180; 	% Photosynthetially Available Radiation umol/m2/s  
+ SetUp.day_min_PAR = 355;	% (iLight=3) Day of the year with minimum light (e.g. Dec. 21st)
+ SetUp.PAR_min = 60;		% (iLight=3) Photosynthetially Available Radiation umol/m2/s   
+ SetUp.PAR_max = 180; 		% (iLight=3) Photosynthetially Available Radiation umol/m2/s  
 
  %-------------------------------
  % Define the type and properties of ML temperature 
- SetUp.iTemp = 2;	% 1: Constant temperature 
+ SetUp.iTemp = 3;	% 1: Constant temperature 
 			% 2: Idealized annual cycle
+			% 3: Observed cycle (California Current)
  % Parameters:
- SetUp.TempRef = 15;  	% Temperature for case 1
+ SetUp.TempRef = 15;  		% (iTemp=1) Temperature for case 1
  % For case 3, Idealized annual cycle:
- SetUp.day_min_Temp = 355;	% Day of the year with minimum temperature (e.g. Dec. 21st)
- SetUp.Temp_min = 5;	% Min temp (C)
- SetUp.Temp_max = 20; 	% Max temp (C)
+ SetUp.day_min_Temp = 355;	% (iTemp=2) Day of the year with minimum temperature (e.g. Dec. 21st)
+ SetUp.Temp_min = 5;		% (iTemp=2) Min temp (C)
+ SetUp.Temp_max = 20; 		% (iTemp=2) Max temp (C)
 
  %-------------------------------
  % Define the type and properties of MLD dynamics
- SetUp.iMLD = 2;	% 1: Constant MLD
+ SetUp.iMLD = 3;	% 1: Constant MLD
 			% 2: Idealized annual cycle
+			% 3: Observed cycle (California Current)
  % Parameters:
- SetUp.MLD0 = 40;  	% Mixed layer depth (m)
- SetUp.day_min_MLD = 265;	% Day of the year with minimum MLD (e.g. Sept. 21st)
- SetUp.MLD_min = 20;	% MLD (m)
- SetUp.MLD_max = 70; 	% MLD (m)
+ SetUp.MLD0 = 40;  		% (iMLD=1) Mixed layer depth (m)
+ SetUp.day_min_MLD = 265;	% (iMLD=2) Day of the year with minimum MLD (e.g. Sept. 21st)
+ SetUp.MLD_min = 20;		% (iMLD=2) shallowest MLD (m)
+ SetUp.MLD_max = 70; 		% (iMLD=2) deepest MLD (m)
 
  %-------------------------------
  % Define the type and properties of mixing/upwelling flow
  SetUp.iFlow = 1;	% 1: constant flow
- SetUp.Flow0 = 100;  % Rate of water flow at base of ML (m/year) (typically 100-1000?)
+                        % 2: idealized cycle
+			% 3: Observed cycle (California Current)
+ SetUp.Flow0 = 0;  		% (iFlow=1) Rate of water flow at base of ML (m/y) (typically 100-1000?)
+ SetUp.day_min_Flow = 152;	% (iFlow=2) Day of the year with minimum Flow (June 1)
+ SetUp.Flow_min = 0;		% (iFlow=2) Flow (m/y)
+ SetUp.Flow_max = 200; 		% (iFlow=2) Flow (m/y)
 
  %--------------------------------------------------------------------------------
  % Here performs any substitution of default parameters based on user input (varargin)
@@ -98,7 +106,7 @@
     SetUp.Env.Temp = SetUp.MaxTemp * ones(1,SetUp.ntime);
  case 2
     %--------------
-    % Case (3) : Idealized annual cycle
+    % Case (2) : Idealized annual cycle
     % Here specifies [time,Temp] values and interpolates in between
     % Creates a sinusoidal temperature cycle between a min and a max value
     % Assumes time is specified in DAYS (later converted to model's hours)
@@ -112,6 +120,20 @@
     % Sets minimum value to Temp_min, and maximum value to Temp_max
     Temp0 = 0.5*(SetUp.Temp_min+SetUp.Temp_max) + 0.5*(SetUp.Temp_max-SetUp.Temp_min) * ...
            cos(2*pi*(time0-SetUp.day_min_Temp)/365-pi); 
+
+    %--------------
+    % Iterpolation step: interpolate annual cycle onto model time vector
+    % including repetiton if multiple years are required
+    %int_mode = 'linear';
+    int_mode = 'pchip';
+    SetUp.Env.Temp = interpolate_annual_cycle_to_model(time0,Temp0,SetUp.time,int_mode);
+ case 3
+    %--------------
+    % Case (3) : Monthly climatology from...........
+    % Assumes time is specified in DAYS (later converted to model's hours)
+    % Assumes first day is Jan1, corresponding to time0=0
+    time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
+    Temp0 = [13.8410   13.6587   13.4908   13.5955   14.0840   14.8739   15.8500   16.7653   17.3801   16.8199   15.8670   14.8162];
 
     %--------------
     % Iterpolation step: interpolate annual cycle onto model time vector
@@ -163,6 +185,22 @@
     %int_mode = 'linear';
     int_mode = 'pchip';
     SetUp.Env.PAR = interpolate_annual_cycle_to_model(time0,PAR0,SetUp.time,int_mode);
+ case 4
+    %--------------
+    % Case (4) : Monthly Climatology of shortwave atmospheric radiation (CORE-I climatology)
+    % Assumes time si specified in DAYS (later converted to model's hours)
+    % Assumes first day is Jan1, corresponding to time0=0
+    time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
+    % Note: PAR here is expressed in W/m2, it will be converted to μmol/m2/s in Terseler's biogeochemical model
+    %       Also note that PAR = 0.45 * (Incoming Shortwave Radiation) (W/m2)
+    PAR0 = [118.4269  157.2174  193.9294  245.6541  282.4302  308.1729  302.4138  281.7501  239.2282  184.5485 132.7342  107.4648]*0.45;
+
+    %--------------
+    % Iterpolation step: interpolate annual cycle onto model time vector
+         % including repetiton if multiple years are required
+    %int_mode = 'linear';
+    int_mode = 'pchip';
+    SetUp.Env.PAR = interpolate_annual_cycle_to_model(time0,PAR0,SetUp.time,int_mode);
  otherwise
     error(['Crazy Town! Lights Off!']);
  end
@@ -191,6 +229,21 @@
     % Sets minimum value to MLD_min, and maximum value to MLD_max
     MLD0 = 0.5*(SetUp.MLD_min+SetUp.MLD_max) + 0.5*(SetUp.MLD_max-SetUp.MLD_min) * ...
            cos(2*pi*(time0-SetUp.day_min_MLD)/365-pi); 
+
+    %--------------
+    % Iterpolation step: interpolate annual cycle onto model time vector
+    % including repetiton if multiple years are required
+    %int_mode = 'linear';
+    int_mode = 'pchip';
+    SetUp.Env.MLD = interpolate_annual_cycle_to_model(time0,MLD0,SetUp.time,int_mode);
+ case 3
+    %--------------
+    % Case (3) : Monthly Climatology from  de Boyer Montegut, 2004 and
+    % MIMOC climatology
+    % Assumes time si specified in DAYS (later converted to model's hours)
+    % Assumes first day is Jan1, corresponding to time0=0
+    time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
+    MLD0 = [41.85  40.22  38.18  33.35  25.42  22.79  20.69  21.12  21.77  25.58  30.92  39.01];
 
     %--------------
     % Iterpolation step: interpolate annual cycle onto model time vector
@@ -238,6 +291,29 @@
     % Vector of Flow values (defined in each time step):
     % Note conversion here from m/year to m/hour
     SetUp.Env.Flow = SetUp.Flow0/365/24 * ones(1,SetUp.ntime);
+ case 2
+    %--------------
+    % Case (2) : Idealized annual cycle
+    % Assumes time is specified in DAYS (later converted to model's hours)
+    % Assumes first day is Jan1, corresponding to time0=0
+    % Assumes the minimum is at September 21 (day=365)
+    % time0 = cumsum([0 31 28 31 30 31 30 31 31 30 31 30]) + ...
+    %         round([31 28 31 30 31 30 31 31 30 31 30 31]/2)-1;
+    time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
+
+    % Uses a cosine function shifted by pi, starting at the winter solstice (day=355)
+    % Sets minimum value to MLD_min, and maximum value to MLD_max
+    Flow0 = 0.5*(SetUp.Flow_min+SetUp.Flow_max) + 0.5*(SetUp.Flow_max-SetUp.Flow_min) * ...
+           cos(2*pi*(time0-SetUp.day_min_Flow)/365-pi);
+    % Conversion here from m/year to m/hour:
+    Flow0 = Flow0/365/24;
+
+    %--------------
+    % Iterpolation step: interpolate annual cycle onto model time vector
+    % including repetiton if multiple years are required
+    %int_mode = 'linear';
+    int_mode = 'pchip';
+    SetUp.Env.Flow = interpolate_annual_cycle_to_model(time0,Flow0,SetUp.time,int_mode);
  otherwise
     error(['Crazy Town! Flow not specified!']);
  end
