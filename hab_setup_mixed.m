@@ -20,15 +20,13 @@
  %-------------------------------
  % General setup
  SetUp.StartTime = 0*24;	% Duration of batch culture (hours)
- SetUp.EndTime = 5*365*24;	% Duration of batch culture (hours)
+ SetUp.EndTime = 10*365*24;	% Duration of batch culture (hours)
  SetUp.dt = 1.0;		% timestep (hours)
 
  %-------------------------------
  % Light attenuation in the Mixed Layer, including "self-shading"
  % Add the biomass-dependent PAR attenuation in the Biological module
  SetUp.kwPAR = 0.04; 	% pure water PAR attenuation (1/m) 
- SetUp.kcPAR = 0.03; 	% biomass-dependent PAR attenuation (1/m/(mmolN/m3))
-			% similar value if expressed as (1/m/(mgChl/m3))
  SetUp.nzPAR = 100;	% Number of vertical grid points for
 			% depth-dependent light calculations
 
@@ -36,13 +34,8 @@
  % Define the type and properties of surface light forcing
  SetUp.iLight = 4;	% 1: Constant light 
 			% 2: 12:12 light:darkness cycles
-<<<<<<< HEAD
-			% 3: Idealized annual cycle
-            % 4: Monthly climatology
-=======
 			% 3: Idealized annual cycle (mid-high latitudes)
 			% 4: Observed cycle (California Current)
->>>>>>> master
  % Parameters:
  SetUp.MaxPAR = 120;  	% (iLight=1,2) Max PAR 
 			% PAR: Photosynthetially Available Radiation umol/m2/s 
@@ -55,11 +48,7 @@
  % Define the type and properties of ML temperature 
  SetUp.iTemp = 3;	% 1: Constant temperature 
 			% 2: Idealized annual cycle
-<<<<<<< HEAD
-            % 3: Monthly climatology
-=======
 			% 3: Observed cycle (California Current)
->>>>>>> master
  % Parameters:
  SetUp.TempRef = 15;  		% (iTemp=1) Temperature for case 1
  % For case 3, Idealized annual cycle:
@@ -71,11 +60,7 @@
  % Define the type and properties of MLD dynamics
  SetUp.iMLD = 3;	% 1: Constant MLD
 			% 2: Idealized annual cycle
-<<<<<<< HEAD
-            % 3: Monthly climatology
-=======
 			% 3: Observed cycle (California Current)
->>>>>>> master
  % Parameters:
  SetUp.MLD0 = 40;  		% (iMLD=1) Mixed layer depth (m)
  SetUp.day_min_MLD = 265;	% (iMLD=2) Day of the year with minimum MLD (e.g. Sept. 21st)
@@ -107,62 +92,14 @@
  % variables (e.g. light, or temperature)
  SetUp.evarnames = {'PAR','Temp','MLD','dMLD','Flow'};
  SetUp.nevar = length(SetUp.evarnames);
- 
+
  % Time vector
  SetUp.time = [SetUp.StartTime:SetUp.dt:SetUp.EndTime-SetUp.dt];
  SetUp.ntime = length(SetUp.time);
- 
+
  %--------------------------------------------------------------------------------
  % Set temperature conditions
  switch SetUp.iTemp
-<<<<<<< HEAD
-     case 1
-         % Case (1) : constant temperature
-         % Vector of leratureight values (defined in each time step):
-         SetUp.Env.Temp = SetUp.MaxTemp * ones(1,SetUp.ntime);
-     case 2
-         %--------------
-         % Case (3) : Idealized annual cycle
-         % Here specifies [time,Temp] values and interpolates in between
-         % Creates a sinusoidal temperature cycle between a min and a max value
-         % Assumes time is specified in DAYS (later converted to model's hours)
-         % Assumes first day is Jan1, corresponding to time0=0
-         % Assumes the minimum is at December 21 (day=355, or -10)
-         % time0 = cumsum([0 31 28 31 30 31 30 31 31 30 31 30]) + ...
-         %         round([31 28 31 30 31 30 31 31 30 31 30 31]/2)-1;
-         time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
-         
-         % Uses a cosine function shifted by pi, starting at the winter solstice (day=355)
-         % Sets minimum value to Temp_min, and maximum value to Temp_max
-         Temp0 = 0.5*(SetUp.Temp_min+SetUp.Temp_max) + 0.5*(SetUp.Temp_max-SetUp.Temp_min) * ...
-             cos(2*pi*(time0-SetUp.day_min_Temp)/365-pi);
-         
-         %--------------
-         % Iterpolation step: interpolate annual cycle onto model time vector
-         % including repetiton if multiple years are required
-         %int_mode = 'linear';
-         int_mode = 'pchip';
-         SetUp.Env.Temp = interpolate_annual_cycle_to_model(time0,Temp0,SetUp.time,int_mode);
-     case 3
-         %--------------
-         % Case (4) : Monthly climatology from...........
-         % Assumes time is specified in DAYS (later converted to model's hours)
-         % Assumes first day is Jan1, corresponding to time0=0
-         time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
-         
-         Temp0 = [13.8410   13.6587   13.4908   13.5955   14.0840   14.8739   15.8500   16.7653   17.3801   16.8199   15.8670   14.8162];
-         
-         %--------------
-         % Iterpolation step: interpolate annual cycle onto model time vector
-         % including repetiton if multiple years are required
-         %int_mode = 'linear';
-         int_mode = 'pchip';
-         SetUp.Env.Temp = interpolate_annual_cycle_to_model(time0,Temp0,SetUp.time,int_mode);         
-         
-         
-     otherwise
-         error(['Crazy Town! Temperature Off!']);
-=======
  case 1
     % Case (1) : constant temperature
     % Vector of leratureight values (defined in each time step):
@@ -192,11 +129,11 @@
     SetUp.Env.Temp = interpolate_annual_cycle_to_model(time0,Temp0,SetUp.time,int_mode);
  case 3
     %--------------
-    % Case (3) : Monthly climatology from...........
+    % Case (3) : Monthly climatology from........... of [yN=38;yS=34;xW=-124;xE=-117];
     % Assumes time is specified in DAYS (later converted to model's hours)
     % Assumes first day is Jan1, corresponding to time0=0
     time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
-    Temp0 = [13.8410   13.6587   13.4908   13.5955   14.0840   14.8739   15.8500   16.7653   17.3801   16.8199   15.8670   14.8162];
+    Temp0 = [13.0690   12.9768   12.8284   12.7843   13.1729   13.8342   14.7581   15.5720   16.3578   15.7215   14.8540   13.9342];
 
     %--------------
     % Iterpolation step: interpolate annual cycle onto model time vector
@@ -206,7 +143,6 @@
     SetUp.Env.Temp = interpolate_annual_cycle_to_model(time0,Temp0,SetUp.time,int_mode);
  otherwise
     error(['Crazy Town! Temperature Off!']);
->>>>>>> master
  end
  %--------------------------------------------------------------------------------
 
@@ -215,60 +151,6 @@
  %--------------------------------------------------------------------------------
  % Set light conditions
  switch SetUp.iLight
-<<<<<<< HEAD
-     case 1
-         % Case (1) : constant light
-         % Vector of light values (defined in each time step):
-         SetUp.Env.PAR = SetUp.MaxPAR * ones(1,SetUp.ntime);
-     case 2
-         % Case (2) : 12:12 light:darkness cycles
-         % Vector of light values (defined in each time step):
-         SetUp.Env.PAR = SetUp.MaxPAR * ones(1,SetUp.ntime);
-         % Find the indices corresponding to times (in hour) between 12-24h, and multiples
-         indLight = (((SetUp.time/24) - floor(SetUp.time/24)))<0.5;
-         SetUp.Env.PAR(indLight) = 0;
-     case 3
-         %--------------
-         % Case (3) : Idealized annual cycle
-         % Here specifies [time,PAR] values and interpolates in between
-         % Creates a sinusoidal light cycle between a min and a max value
-         % Assumes time si specified in DAYS (later converted to model's hours)
-         % Assumes first day is Jan1, corresponding to time0=0
-         % Assumes the minimum is at December 21 (day=355, or -10)
-         % time0 = cumsum([0 31 28 31 30 31 30 31 31 30 31 30]) + ...
-         %         round([31 28 31 30 31 30 31 31 30 31 30 31]/2)-1;
-         time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
-         
-         % Uses a cosine function shifted by pi, starting at the winter solstice (day=355)
-         % Sets minimum value to PAR_min, and maximum value to PAR_max
-         PAR0 = 0.5*(SetUp.PAR_min+SetUp.PAR_max) + 0.5*(SetUp.PAR_max-SetUp.PAR_min) * ...
-             cos(2*pi*(time0-SetUp.day_min_PAR)/365-pi);
-         
-         %--------------
-         % Iterpolation step: interpolate annual cycle onto model time vector
-         % including repetiton if multiple years are required
-         %int_mode = 'linear';
-         int_mode = 'pchip';
-         SetUp.Env.PAR = interpolate_annual_cycle_to_model(time0,PAR0,SetUp.time,int_mode);
-         
-     case 4
-         %--------------
-         % Case (4) : Monthly Climatology of shortwave atmospheric radiation (CORE-I climatology)
-         % Assumes time si specified in DAYS (later converted to model's hours)
-         % Assumes first day is Jan1, corresponding to time0=0
-         time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
-         
-         PAR0 = [118.4269  157.2174  193.9294  245.6541  282.4302  308.1729  302.4138  281.7501  239.2282  184.5485  132.7342  107.4648]*0.45*4.6; %1 W/m2 ≈ 4.6 μmole.m2/s ;
-         
-         %--------------
-         % Iterpolation step: interpolate annual cycle onto model time vector
-         % including repetiton if multiple years are required
-         %int_mode = 'linear';
-         int_mode = 'pchip';
-         SetUp.Env.PAR = interpolate_annual_cycle_to_model(time0,PAR0,SetUp.time,int_mode);
-     otherwise
-         error(['Crazy Town! Lights Off!']);
-=======
  case 1
     % Case (1) : constant light
     % Vector of light values (defined in each time step):
@@ -305,13 +187,14 @@
     SetUp.Env.PAR = interpolate_annual_cycle_to_model(time0,PAR0,SetUp.time,int_mode);
  case 4
     %--------------
-    % Case (4) : Monthly Climatology of shortwave atmospheric radiation (CORE-I climatology)
+    % Case (4) : Monthly Climatology of shortwave atmospheric radiation
+    % (CORE-I climatology) of [yN=38;yS=34;xW=-124;xE=-117];
     % Assumes time si specified in DAYS (later converted to model's hours)
     % Assumes first day is Jan1, corresponding to time0=0
     time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
     % Note: PAR here is expressed in W/m2, it will be converted to μmol/m2/s in Terseler's biogeochemical model
     %       Also note that PAR = 0.45 * (Incoming Shortwave Radiation) (W/m2)
-    PAR0 = [118.4269  157.2174  193.9294  245.6541  282.4302  308.1729  302.4138  281.7501  239.2282  184.5485 132.7342  107.4648]*0.45;
+    PAR0 = [112.1075  150.6634  189.2540  242.9275  280.2024  308.1101  304.7319  282.4868  236.7022  179.7531  127.0540  101.5912]*0.45; %From SAR to PAR 
 
     %--------------
     % Iterpolation step: interpolate annual cycle onto model time vector
@@ -321,62 +204,12 @@
     SetUp.Env.PAR = interpolate_annual_cycle_to_model(time0,PAR0,SetUp.time,int_mode);
  otherwise
     error(['Crazy Town! Lights Off!']);
->>>>>>> master
  end
  %--------------------------------------------------------------------------------
 
  %--------------------------------------------------------------------------------
- % Set Mixed Layer dynamics
+ % Set Mixed Layer dynamics 
  switch SetUp.iMLD
-<<<<<<< HEAD
-     case 1
-         % Case (1) : constant MLD
-         % Vector of MLD values (defined in each time step):
-         SetUp.Env.MLD = SetUp.MLD0 * ones(1,SetUp.ntime);
-     case 2
-         %--------------
-         % Case (2) : Idealized annual cycle
-         % Here specifies [time,MLD] values and interpolates in between
-         % Creates a sinusoidal MLD cycle between a min and a max value
-         % Assumes time si specified in DAYS (later converted to model's hours)
-         % Assumes first day is Jan1, corresponding to time0=0
-         % Assumes the minimum is at September 21 (day=365)
-         % time0 = cumsum([0 31 28 31 30 31 30 31 31 30 31 30]) + ...
-         %         round([31 28 31 30 31 30 31 31 30 31 30 31]/2)-1;
-         time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
-         
-         % Uses a cosine function shifted by pi, starting at the winter solstice (day=355)
-         % Sets minimum value to MLD_min, and maximum value to MLD_max
-         MLD0 = 0.5*(SetUp.MLD_min+SetUp.MLD_max) + 0.5*(SetUp.MLD_max-SetUp.MLD_min) * ...
-             cos(2*pi*(time0-SetUp.day_min_MLD)/365-pi);
-         
-         %--------------
-         % Iterpolation step: interpolate annual cycle onto model time vector
-         % including repetiton if multiple years are required
-         %int_mode = 'linear';
-         int_mode = 'pchip';
-         SetUp.Env.MLD = interpolate_annual_cycle_to_model(time0,MLD0,SetUp.time,int_mode);
-         
-     case 3         
-         %--------------
-         % Case (3) : Monthly Climatology from  de Boyer Montegut, 2004 and
-         % MIMOC climatology
-         % Assumes time si specified in DAYS (later converted to model's hours)
-         % Assumes first day is Jan1, corresponding to time0=0
-         time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
-         
-         MLD0 = [41.8504   40.2203   38.1772   33.3505   25.4230   22.7872   20.6881   21.1161   21.7686   25.5828   30.9152   39.0118];
-         
-         %--------------
-         % Iterpolation step: interpolate annual cycle onto model time vector
-         % including repetiton if multiple years are required
-         %int_mode = 'linear';
-         int_mode = 'pchip';
-         SetUp.Env.MLD = interpolate_annual_cycle_to_model(time0,MLD0,SetUp.time,int_mode);
-         
-     otherwise
-         error(['Crazy Town! MLD Off!']);
-=======
  case 1
     % Case (1) : constant MLD
     % Vector of MLD values (defined in each time step):
@@ -406,12 +239,11 @@
     SetUp.Env.MLD = interpolate_annual_cycle_to_model(time0,MLD0,SetUp.time,int_mode);
  case 3
     %--------------
-    % Case (3) : Monthly Climatology from  de Boyer Montegut, 2004 and
-    % MIMOC climatology
+    % Case (3) : Monthly Climatology from  de Boyer Montegut, 2004 of [yN=38;yS=34;xW=-124;xE=-117];
     % Assumes time si specified in DAYS (later converted to model's hours)
     % Assumes first day is Jan1, corresponding to time0=0
     time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
-    MLD0 = [41.85  40.22  38.18  33.35  25.42  22.79  20.69  21.12  21.77  25.58  30.92  39.01];
+    MLD0 = [41.2247   38.2636   31.3924   25.7955   19.5287   18.5425   17.7829   18.2620   18.0593   20.7388   26.5198   33.7135];
 
     %--------------
     % Iterpolation step: interpolate annual cycle onto model time vector
@@ -421,7 +253,6 @@
     SetUp.Env.MLD = interpolate_annual_cycle_to_model(time0,MLD0,SetUp.time,int_mode);
  otherwise
     error(['Crazy Town! MLD Off!']);
->>>>>>> master
  end
  
  %-------------------------------

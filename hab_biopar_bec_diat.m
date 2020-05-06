@@ -15,52 +15,8 @@
                     'DiDA','DDA','PDA'};
  BioPar.nvar = length(BioPar.varnames);
 
-<<<<<<< HEAD
- % Model variables: set initial values
- % Nutrients:
- BioPar.NO3_0 = 5.7033; 		% In mmolN/m3  
- BioPar.NH4_0 = 0; 		% In mmolN/m3  
- BioPar.Si_0 = 8.4051;  		% In mmolSi/m3  
- BioPar.PO4_0 = 0.7852;  		% In mmolP/m3  
- BioPar.Fe_0 = 1e-1; 	  	% In mmolFe/m3  
- % Biological pools:
- BioPar.DiN_0 = 5.5;
- BioPar.DiFe_0 = 4.3e-5;
- BioPar.DiChl_0 = 0.8;
- BioPar.DiSi_0 = 5.5;
- BioPar.DON_0 = 0.001;
- BioPar.DOFe_0 = 0.0;
- BioPar.PON_0 = 0.00;
- BioPar.POFe_0 = 0.00;
- BioPar.PSi_0 = 0.00;
- BioPar.DiDA_0 = 0;
- BioPar.DDA_0 = 0;
- BioPar.PDA_0 = 0;
- 
- % For the chemostat or mixed layer case, set up input values for all tracers
- % (typically, specify nutrients and set all biological terms to 0)
- BioPar.NO3_in = 5.7033; 		% In mmolN/m3  
- BioPar.NH4_in = 0; 		% In mmolN/m3  
- BioPar.Si_in = 8.4051;  		% In mmolSi/m3  
- BioPar.PO4_in = 0.7852;  		% In mmolP/m3  
- BioPar.Fe_in = 1e-1;  		% In nmolFe/m3  
- % Biological pools:
- BioPar.DiN_in = 0;
- BioPar.DiFe_in = 0;
- BioPar.DiChl_in = 0;
- BioPar.DiSi_in = 0;
- BioPar.DON_in = 0;
- BioPar.DOFe_in = 0;
- BioPar.PON_in = 0;
- BioPar.POFe_in = 0;
- BioPar.PSi_in = 0;
- BioPar.DiDA_in = 0;
- BioPar.DDA_in = 0;
- BioPar.PDA_in = 0;
-=======
  % Initialize biogeochemical variables (initial and boundary conditions)
  BioPar = hab_initialize_bec_diat(BioPar,hab.ExpModule);
->>>>>>> master
 
  % Constants
  y2d = 365;
