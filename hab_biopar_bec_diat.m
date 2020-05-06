@@ -15,6 +15,7 @@
                     'DiDA','DDA','PDA'};
  BioPar.nvar = length(BioPar.varnames);
 
+<<<<<<< HEAD
  % Model variables: set initial values
  % Nutrients:
  BioPar.NO3_0 = 5.7033; 		% In mmolN/m3  
@@ -56,13 +57,24 @@
  BioPar.DiDA_in = 0;
  BioPar.DDA_in = 0;
  BioPar.PDA_in = 0;
+=======
+ % Initialize biogeochemical variables (initial and boundary conditions)
+ BioPar = hab_initialize_bec_diat(BioPar,hab.ExpModule);
+>>>>>>> master
 
  % Constants
  y2d = 365;
  d2h = 24;
  
+ % Parameters for physical coupling
  % Light attenuation by phytoplankton
- kcPAR = 0.03;   		% atten. coeff. per unit chlorophyll (1/m/(mg Chl/m^3))
+ BioPar.kcPAR = 0.03;   	% atten. coeff. per unit chlorophyll (1/m/(mg Chl/m^3))
+
+ % Macronutrient recycling term (0: no recycling, 1: recycling)
+ BioPar.iRcy = 0;
+
+ % Sinking velocity per POM (for mixed layer case only)
+ BioPar.wsPOM = 25/24;		% sinking velocity in m/h (typically 25 m/d)
  
  % Stoichiometric ratios
  BioPar.rPC = 0.00855;		% stoichiometric ratio for PN P:C (Redfield = 1/106)
@@ -70,6 +82,7 @@
  BioPar.rPN = BioPar.rPC ./ BioPar.rNC; 	% stoichiometric ratio for PN P:N
  BioPar.rSiN = 0.137 ./ BioPar.rNC; 	% baseline Si:N Diatom uptake
  BioPar.rSiNmax = 0.685 / BioPar.rNC;	% max stoichiometric ratio for PN Si:N 
+ BioPar.rSiNmin = 0.0685 / BioPar.rNC;	% min stoichiometric ratio for PN Si:N 
  BioPar.rFeN = 6*1e-6 / BioPar.rNC;	% baseline stoichiometric ratio for PN Fe:N 
  BioPar.rFeNmin = 2.5*1e-6 / BioPar.rNC;	% Minimum stoichiometric ratio for PN Fe:N 
  BioPar.rFeNzoo = 2.5*1e-6 / BioPar.rNC;	% Zooplankton stoichiometric ratio for PN Fe:N 
@@ -93,9 +106,9 @@
 
  % Losses parameters
  BioPar.lMortDi = 0.15/d2h;			% 1/day
- BioPar.lMort2Di = 1 * 0.0035/BioPar.rNC/d2h;	% 1/mmolC/m3/day
- BioPar.tAggDiMin = 1 * 0.01/d2h;			% 1/day
- BioPar.tAggDiMax = 1 * 0.75/d2h;			% 1/day
+ BioPar.lMort2Di = 0 * 0.0035/BioPar.rNC/d2h;	% 1/mmolC/m3/day
+ BioPar.tAggDiMin = 0 * 0.01/d2h;		% 1/day
+ BioPar.tAggDiMax = 0 * 0.75/d2h;		% 1/day
  BioPar.bGrzThres = 0.02 * BioPar.rNC;		% mmolN/m3 
  
  % Detritus parameters

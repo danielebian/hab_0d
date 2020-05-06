@@ -15,20 +15,22 @@
  %--------------------------------------------------------------------------------
  % General setup
  SetUp.StartTime = 0*24;	% Duration of batch culture (hours)
- SetUp.EndTime = 25*24;	% Duration of batch culture (hours)
+ SetUp.EndTime = 2*25*24;	% Duration of batch culture (hours)
  SetUp.dt = 0.1;            % timestep (hours)
 
  %-------------------------------
  % Define the type and properties of light forcing
  SetUp.iLight = 1;      % Case (1) : constant light
                         % Case (2) : 12:12 light:darkness cycles
- SetUp.MaxPAR = 60;     % Photosynthetially Available Radiation umol/m2/s or W/m2 (depending on BioModule)  
+ SetUp.MaxPAR = 60/4.6;		% Photosynthetially Available Radiation (W/m2)
+                                % Note this is converted to umol/m2/s in terseleer case  
+                                % Note: 1 W/m2 ≈ 4.6 μmole.m2/s;     
 
  %-------------------------------
  % Define the type and properties of light forcing
  SetUp.iTemp = 1;      % Case (1) : constant light
                        % Case (2) : variable temp (to be implemented if needed)
- SetUp.TempRef = 15;   % Temperature of the batch colture
+ SetUp.TempRef = 15;   % Temperature of the batch culture
 
  %--------------------------------------------------------------------------------
  % Here performs any substitution of default parameters based on user input (varargin)

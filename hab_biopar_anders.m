@@ -8,23 +8,11 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  % Model variables
- BioPar.varnames = {'PN','pDA','dDA','NO3','Si'};
+ BioPar.varnames = {'NO3','Si','PN','pDA','dDA'};
  BioPar.nvar = length(BioPar.varnames);
 
- % Model variables: set initial values
- BioPar.PN_0 = 0.1;  
- BioPar.pDA_0 = 0.0;
- BioPar.dDA_0 = 0.0;
- BioPar.NO3_0 = 980;
- BioPar.Si_0 = 132;
-
- % For the chemostat case, set up input values for all tracers
- % (typically, specify nutrients and set all biological terms to 0)
- BioPar.PN_in = 0;  
- BioPar.pDA_in = 0;
- BioPar.dDA_in = 0;
- BioPar.NO3_in = 16;
- BioPar.Si_in = 10;
+ % Initialize biogeochemical variables (initial and boundary conditions)
+ BioPar = hab_initialize_anders(BioPar,hab.ExpModule);
 
  % Constants
  BioPar.beta = 0.1; 		% non-dimensional

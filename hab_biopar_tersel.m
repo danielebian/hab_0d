@@ -8,9 +8,10 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  % Model variables
- BioPar.varnames = {'PNF','PNS','PNR','pDA','dDA','NO3','Si','PO4'};
+ BioPar.varnames = {'NO3','Si','PO4','PNF','PNS','PNR','pDA','dDA'};
  BioPar.nvar = length(BioPar.varnames);
 
+<<<<<<< HEAD
 % Model variables: set initial values
  BioPar.PNF_0 = 27.5;		% In mmolC/m3  
  BioPar.PNS_0 = 27.5*0.57;	% In mmolC/m3  
@@ -34,6 +35,14 @@
  BioPar.NO3_in = 5.7033; 		% In mmolN/m3  
  BioPar.Si_in = 8.4051;  		% In mmolSi/m3  
  BioPar.PO4_in = 0.7852;  		% In mmolP/m3  
+=======
+% Initialize biogeochemical variables (initial and boundary conditions)
+ BioPar = hab_initialize_tersel(BioPar,hab.ExpModule);
+
+ % Parameters for physical coupling
+ % Light attenuation by phytoplankton
+ BioPar.kcPAR = 0.03;           % atten. coeff. per unit chlorophyll (1/m/(mg Chl/m^3))
+>>>>>>> master
 
  % Constants
  BioPar.alpha = 0.001;		% Photosynt. efficiency [1/h * 1/(umol/m2/s)]
