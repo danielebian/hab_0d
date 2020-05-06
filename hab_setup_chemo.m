@@ -27,7 +27,9 @@
  % Define the type and properties of light forcing
  SetUp.iLight = 1;	% Case (1) : constant light
 			% Case (2) : 12:12 light:darkness cycles
- SetUp.MaxPAR = 60;  	% Photosynthetially Available Radiation umol/m2/s  
+SetUp.MaxPAR = 60/4.6;	% Photosynthetially Available Radiation (W/m2)
+			% Note this is converted to umol/m2/s in terseleer case  
+                        % Note: 1 W/m2 ≈ 4.6 μmole.m2/s;     
 
  %-------------------------------
  % Define the type and properties of light forcing

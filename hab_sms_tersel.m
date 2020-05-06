@@ -27,9 +27,12 @@
  % Structure with the bioparameters, for simplicity
  bio = hab.BioPar;
  
- %------------------------------------------------
+%------------------------------------------------
  % Start Sources and Sinks here:
  %------------------------------------------------
+
+ % NOTE: here converts PAR from W/m2 to umol/m2/s (1 W/m2 ≈ 4.6 μmole/m2/s);
+ evar.PAR = evar.PAR * 4.6;
 
  % Photosynthesis rate:
  % Differentiate culture case (constant light) from Mixed Layer case (depth-dependent light)
@@ -40,8 +43,8 @@
     %-----------------------
     % 1. Estimates the light attenuation coefficient including "self-shading"
     % Note that since ML is well-mixed, the attenuation coefficient is constant with depth
-    % Biomass in mmolN/m3 estimated from PNF, converted to N units using PN rNC
-    kPAR = hab.SetUp.kwPAR + hab.SetUp.kcPAR * var.PNF * hab.BioPar.rNC; 
+    % Biomass in mmolC/m3 estimated from PNF, converted to Chl units with a fixed C:Chl;
+    kPAR = hab.SetUp.kwPAR + bio.kcPAR * var.PNF * 12/50;
     %-----------------------
     % 2. Estimates light in the water column on a vertical grid between [0,MLD]
     zPAR = linspace(0,evar.MLD,hab.SetUp.nzPAR);
@@ -95,16 +98,16 @@
  uptSi = growth * bio.rSiC;
 
  % Final source and sink terms
- % 'PNF','PNS','PNR','pDA','dDA','NO3','Si','PO4'
+ % 'NO3','Si','PO4','PNF','PNS','PNR','pDA','dDA'
+ dNO3dt = - uptNO3;
+ dPO4dt = - uptPO4;
+ dSidt = - uptSi;
  dPNFdt = growth - lysPNF;
  dPNSdt = photo - growth - resp - lysPNS - excPNS - syntPNR + catPNR - prodDA;
  dPNRdt = syntPNR - catPNR - lysPNR;
  dpDAdt = prodDA - excpDA - lyspDA;
  ddDAdt = excpDA + lyspDA;
- dNO3dt = - uptNO3;
- dPO4dt = - uptPO4;
- dSidt = - uptSi;
 
  % Lumps SMS terms into a single vector
- sms = [dPNFdt;dPNSdt;dPNRdt;dpDAdt;ddDAdt;dNO3dt;dSidt;dPO4dt];
+ sms = [dNO3dt;dSidt;dPO4dt;dPNFdt;dPNSdt;dPNRdt;dpDAdt;ddDAdt];
 

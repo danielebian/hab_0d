@@ -134,7 +134,7 @@
  Suite.runtime = 0;
  for irun = 1:Suite.nruns
      Suite.runtime = Suite.runtime + Suite.Out{irun}.runtime;
- end;
+ end
 
  %-------------------------------------------------------
  % Postprocess, rename and save the suite

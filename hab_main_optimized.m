@@ -67,6 +67,8 @@
     hab = hab_biopar_anders(hab,arg_BioPar{:});
  case 'terseleer'
     hab = hab_biopar_tersel(hab,arg_BioPar{:});
+ case 'bec_diat'
+    hab = hab_biopar_bec_diat(hab,new_BioPar{:});
  otherwise
     error(['Crazy town! (biological case not found)']);
  end
@@ -97,6 +99,8 @@
        hab_plot_anders(hab); %Plot model
     case 'terseleer'
        hab_plot_tersel(hab); %Plot model
+    case 'bec_diat'
+       hab_plot_all(hab); %Plot model
     otherwise
        error(['Crazy town! (Processing not found)']);
     end

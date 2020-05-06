@@ -147,7 +147,7 @@
  end
  % Overrides values at low Si
  if var.Si < 2*bio.KSi
-    gQSiNDi = max( bio.rSiNmax, ...
+    gQSiNDi = max( bio.rSiNmin, ...
                   (gQSiNDi * var.Si/(2 * bio.KSi)));
  end
 
@@ -290,16 +290,37 @@
  PDAloss = bio.rPOM * var.PDA;
  DDAloss = bio.rDOM * var.DDA;
 
- %-----------------------------------------------------------
+ %%%%%%%%%%%%%%%%%%%%%%%%%
+ % POM sinking
+ %%%%%%%%%%%%%%%%%%%%%%%%%%
+ % Here adds a sinking terms to all particulate components, for mixed layer case
+ % Sinking is just a removal term, assuming a constant sinking speed averaged over the ML.
+ % All particle components are assumed to sink at the same rate, given by wSink/MLD (1/time)
+ switch hab.ExpModule
+ case 'mixed_layer'
+    sinkRate = bio.wsPOM/evar.MLD;
+    sinkPON  = var.PON  * sinkRate;
+    sinkPOFe = var.POFe * sinkRate;
+    sinkPSi = var.PSi * sinkRate;
+    sinkPDA  = var.PDA  * sinkRate;
+ otherwise
+    sinkPON  = 0;
+    sinkPOFe = 0;
+    sinkPSi = 0;
+    sinkPDA  = 0;
+ end
+
+  %-----------------------------------------------------------
  % Final source and sink terms
  % 'NO3','NH4','Si','PO4','Fe','DiN','DiFe','DiChl','DiSi', ...
  % 'DON','DOFe','PON','POFe','PSi','DiDA','DDA','PDA'
  % Dissolved Inorganic Nutrients
+ % NOTE: the bio.iRcy term allows recycling of nutrients
  dNO3dt = - JNO3Di;
- dNH4dt = - JNH4Di + JNH4Lys + JNH4Grz + JNH4DON + JNH4PON;
- dPO4dt = bio.rPN * (- JPhotoDi + JNH4DON + JRemPON + JNH4Lys + JNH4Grz);
- dSidt = - gQSiNDi * JPhotoDi + JSiGrz + JSiLys + JRemPSi;  
- dFedt = - gQFeNDi * JPhotoDi + JRemDOFe + JRemPOFe + QFeNDi * (JNH4Lys + JNH4Grz) + JGrzDiFe - JScFe;
+ dNH4dt = - JNH4Di + bio.iRcy * (JNH4Lys + JNH4Grz + JNH4DON + JNH4PON);
+ dPO4dt = bio.rPN * (- JPhotoDi + bio.iRcy * (JNH4DON + JRemPON + JNH4Lys + JNH4Grz));
+ dSidt = - gQSiNDi * JPhotoDi + bio.iRcy * (JSiGrz + JSiLys + JRemPSi);  
+ dFedt = - gQFeNDi * JPhotoDi + bio.iRcy * (JRemDOFe + JRemPOFe + QFeNDi * (JNH4Lys + JNH4Grz) + JGrzDiFe) - JScFe;
  % Diatoms
  dDiNdt = JPhotoDi - (JGrzDi + JLysDi + JAggDi);
  dDiFedt = gQFeNDi * JPhotoDi - QFeNDi * (JGrzDi + JLysDi + JAggDi);
@@ -309,13 +330,13 @@
  dDONdt = JProdDON - JRemDON;
  dDOFedt = JProdDOFe - JRemDOFe;
  % Particulate Matter
- dPONdt = JProdPON - JRemPON;
- dPOFedt = JProdPOFe - JRemPOFe;
- dPSidt = JProdPSi - JRemPSi;
+ dPONdt = JProdPON - JRemPON - sinkPON;
+ dPOFedt = JProdPOFe - JRemPOFe - sinkPOFe;
+ dPSidt = JProdPSi - JRemPSi - sinkPSi;
  % DA production
  dDiDAdt = DiDAprod - DiDAloss;
  dDDAdt  = DDAprod  - DDAloss;
- dPDAdt  = PDAprod  - PDAloss;
+ dPDAdt  = PDAprod  - PDAloss - sinkPDA;
  %-----------------------------------------------------------
  % Lumps SMS terms into a single vector
  sms = [dNO3dt; ...

@@ -1,5 +1,5 @@
- function hab_plot_tersel(hab);
-
+ function hab_plot_all(hab)
+ 
  Tstart = 0;
  Tend = hab.Sol.time(end)/24;
  eps = 1e-10;
@@ -12,7 +12,7 @@
  [nsp, npp] = numSubplots(nvar);
 
  figure
- for indv=1:nvar; 
+ for indv=1:nvar 
     vname = varnames{indv};
     tvar = hab.Sol.(vname);
     subplot(nsp(1),nsp(2),indv)
