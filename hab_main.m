@@ -18,8 +18,8 @@
  % 'anderson' : Clarissa Anderson simple PN/DA model
  % 'terseleer' : Terseleer Based on 2013 Paper
  %hab.BioModule = 'anderson';
- hab.BioModule = 'terseleer';
-%   hab.BioModule = 'bec_diat';
+%  hab.BioModule = 'terseleer';
+  hab.BioModule = 'bec_diat';
 
  % Experimental setup
  % Options:

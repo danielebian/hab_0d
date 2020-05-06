@@ -17,10 +17,10 @@
 
  % Model variables: set initial values
  % Nutrients:
- BioPar.NO3_0 = 974; 		% In mmolN/m3  
+ BioPar.NO3_0 = 5.7033; 		% In mmolN/m3  
  BioPar.NH4_0 = 0; 		% In mmolN/m3  
- BioPar.Si_0 = 136;  		% In mmolSi/m3  
- BioPar.PO4_0 = 16.3;  		% In mmolP/m3  
+ BioPar.Si_0 = 8.4051;  		% In mmolSi/m3  
+ BioPar.PO4_0 = 0.7852;  		% In mmolP/m3  
  BioPar.Fe_0 = 1e-1; 	  	% In mmolFe/m3  
  % Biological pools:
  BioPar.DiN_0 = 5.5;
@@ -38,11 +38,11 @@
  
  % For the chemostat or mixed layer case, set up input values for all tracers
  % (typically, specify nutrients and set all biological terms to 0)
- BioPar.NO3_in = 0; 		% In mmolN/m3  
+ BioPar.NO3_in = 5.7033; 		% In mmolN/m3  
  BioPar.NH4_in = 0; 		% In mmolN/m3  
- BioPar.Si_in = 0;  		% In mmolSi/m3  
- BioPar.PO4_in = 0;  		% In mmolP/m3  
- BioPar.Fe_in = 0;  		% In nmolFe/m3  
+ BioPar.Si_in = 8.4051;  		% In mmolSi/m3  
+ BioPar.PO4_in = 0.7852;  		% In mmolP/m3  
+ BioPar.Fe_in = 1e-1;  		% In nmolFe/m3  
  % Biological pools:
  BioPar.DiN_in = 0;
  BioPar.DiFe_in = 0;

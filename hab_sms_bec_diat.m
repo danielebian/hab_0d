@@ -151,6 +151,10 @@
                   (gQSiNDi * var.Si/(2 * bio.KSi)));
  end
 
+%  if var.DiSi/var.DiN>1
+%        pause
+% end
+%  
  %%%%%%%%%%%%%%%%%%%
  % Diatom Iron cycle
  %%%%%%%%%%%%%%%%%%%
