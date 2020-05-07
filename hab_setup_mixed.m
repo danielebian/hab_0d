@@ -20,7 +20,7 @@
  %-------------------------------
  % General setup
  SetUp.StartTime = 0*24;	% Duration of batch culture (hours)
- SetUp.EndTime = 10*365*24;	% Duration of batch culture (hours)
+ SetUp.EndTime = 5*365*24;	% Duration of batch culture (hours)
  SetUp.dt = 1.0;		% timestep (hours)
 
  %-------------------------------
@@ -58,7 +58,7 @@
 
  %-------------------------------
  % Define the type and properties of MLD dynamics
- SetUp.iMLD = 3;	% 1: Constant MLD
+ SetUp.iMLD =3;	% 1: Constant MLD
 			% 2: Idealized annual cycle
 			% 3: Observed cycle (California Current)
  % Parameters:
@@ -303,8 +303,13 @@
 
     % Uses a cosine function shifted by pi, starting at the winter solstice (day=355)
     % Sets minimum value to MLD_min, and maximum value to MLD_max
-    Flow0 = 0.5*(SetUp.Flow_min+SetUp.Flow_max) + 0.5*(SetUp.Flow_max-SetUp.Flow_min) * ...
-           cos(2*pi*(time0-SetUp.day_min_Flow)/365-pi);
+%     Flow0 = 0.5*(SetUp.Flow_min+SetUp.Flow_max) + 0.5*(SetUp.Flow_max-SetUp.Flow_min) * ...
+%         cos(2*pi*(time0-SetUp.day_min_Flow)/365);
+    
+    Flow0=[gausswin(11,8)*SetUp.Flow_max]';
+    Flow02=[gausswin(12,8)*SetUp.Flow_max]';
+    Flow0(12)=Flow02(end);
+%     
     % Conversion here from m/year to m/hour:
     Flow0 = Flow0/365/24;
 

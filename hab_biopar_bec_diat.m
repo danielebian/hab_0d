@@ -27,7 +27,7 @@
  BioPar.kcPAR = 0.03;   	% atten. coeff. per unit chlorophyll (1/m/(mg Chl/m^3))
 
  % Macronutrient recycling term (0: no recycling, 1: recycling)
- BioPar.iRcy = 0;
+ BioPar.iRcy = 1;
 
  % Sinking velocity per POM (for mixed layer case only)
  BioPar.wsPOM = 25/24;		% sinking velocity in m/h (typically 25 m/d)
@@ -62,9 +62,9 @@
 
  % Losses parameters
  BioPar.lMortDi = 0.15/d2h;			% 1/day
- BioPar.lMort2Di = 0 * 0.0035/BioPar.rNC/d2h;	% 1/mmolC/m3/day
- BioPar.tAggDiMin = 0 * 0.01/d2h;		% 1/day
- BioPar.tAggDiMax = 0 * 0.75/d2h;		% 1/day
+ BioPar.lMort2Di = 1 * 0.0035/BioPar.rNC/d2h;	% 1/mmolC/m3/day
+ BioPar.tAggDiMin = 1 * 0.01/d2h;		% 1/day
+ BioPar.tAggDiMax = 1 * 0.75/d2h;		% 1/day
  BioPar.bGrzThres = 0.02 * BioPar.rNC;		% mmolN/m3 
  
  % Detritus parameters

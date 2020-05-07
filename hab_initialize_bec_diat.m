@@ -128,10 +128,10 @@
     % (typically, specify nutrients and set all biological terms to 0)
     %-------------------------------------------
     % Nutrients:
-    BioPar.NO3_in = 15;           % In mmolN/m3  
+    BioPar.NO3_in = 8.6865;           % In mmolN/m3  
     BioPar.NH4_in = 0;             % In mmolN/m3  
-    BioPar.Si_in = 5;             % In mmolSi/m3  
-    BioPar.PO4_in = 2;        % In mmolP/m3  
+    BioPar.Si_in = 10.7468;             % In mmolSi/m3  
+    BioPar.PO4_in = 0.9525;        % In mmolP/m3  
     BioPar.Fe_in = 0.1;            % In nmolFe/m3  
     %-------------------------------------------
     % Biological pools:
