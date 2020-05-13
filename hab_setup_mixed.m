@@ -58,7 +58,7 @@
 
  %-------------------------------
  % Define the type and properties of MLD dynamics
- SetUp.iMLD = 3;	% 1: Constant MLD
+ SetUp.iMLD =3;	% 1: Constant MLD
 			% 2: Idealized annual cycle
 			% 3: Observed cycle (California Current)
  % Parameters:
@@ -129,11 +129,11 @@
     SetUp.Env.Temp = interpolate_annual_cycle_to_model(time0,Temp0,SetUp.time,int_mode);
  case 3
     %--------------
-    % Case (3) : Monthly climatology from...........
+    % Case (3) : Monthly climatology from........... of [yN=38;yS=34;xW=-124;xE=-117];
     % Assumes time is specified in DAYS (later converted to model's hours)
     % Assumes first day is Jan1, corresponding to time0=0
     time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
-    Temp0 = [13.8410   13.6587   13.4908   13.5955   14.0840   14.8739   15.8500   16.7653   17.3801   16.8199   15.8670   14.8162];
+    Temp0 = [13.0690   12.9768   12.8284   12.7843   13.1729   13.8342   14.7581   15.5720   16.3578   15.7215   14.8540   13.9342];
 
     %--------------
     % Iterpolation step: interpolate annual cycle onto model time vector
@@ -187,13 +187,14 @@
     SetUp.Env.PAR = interpolate_annual_cycle_to_model(time0,PAR0,SetUp.time,int_mode);
  case 4
     %--------------
-    % Case (4) : Monthly Climatology of shortwave atmospheric radiation (CORE-I climatology)
+    % Case (4) : Monthly Climatology of shortwave atmospheric radiation
+    % (CORE-I climatology) of [yN=38;yS=34;xW=-124;xE=-117];
     % Assumes time si specified in DAYS (later converted to model's hours)
     % Assumes first day is Jan1, corresponding to time0=0
     time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
     % Note: PAR here is expressed in W/m2, it will be converted to μmol/m2/s in Terseler's biogeochemical model
     %       Also note that PAR = 0.45 * (Incoming Shortwave Radiation) (W/m2)
-    PAR0 = [118.4269  157.2174  193.9294  245.6541  282.4302  308.1729  302.4138  281.7501  239.2282  184.5485 132.7342  107.4648]*0.45;
+    PAR0 = [112.1075  150.6634  189.2540  242.9275  280.2024  308.1101  304.7319  282.4868  236.7022  179.7531  127.0540  101.5912]*0.45; %From SAR to PAR 
 
     %--------------
     % Iterpolation step: interpolate annual cycle onto model time vector
@@ -238,12 +239,11 @@
     SetUp.Env.MLD = interpolate_annual_cycle_to_model(time0,MLD0,SetUp.time,int_mode);
  case 3
     %--------------
-    % Case (3) : Monthly Climatology from  de Boyer Montegut, 2004 and
-    % MIMOC climatology
+    % Case (3) : Monthly Climatology from  de Boyer Montegut, 2004 of [yN=38;yS=34;xW=-124;xE=-117];
     % Assumes time si specified in DAYS (later converted to model's hours)
     % Assumes first day is Jan1, corresponding to time0=0
     time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
-    MLD0 = [41.85  40.22  38.18  33.35  25.42  22.79  20.69  21.12  21.77  25.58  30.92  39.01];
+    MLD0 = [41.2247   38.2636   31.3924   25.7955   19.5287   18.5425   17.7829   18.2620   18.0593   20.7388   26.5198   33.7135];
 
     %--------------
     % Iterpolation step: interpolate annual cycle onto model time vector
@@ -303,8 +303,13 @@
 
     % Uses a cosine function shifted by pi, starting at the winter solstice (day=355)
     % Sets minimum value to MLD_min, and maximum value to MLD_max
-    Flow0 = 0.5*(SetUp.Flow_min+SetUp.Flow_max) + 0.5*(SetUp.Flow_max-SetUp.Flow_min) * ...
-           cos(2*pi*(time0-SetUp.day_min_Flow)/365-pi);
+%     Flow0 = 0.5*(SetUp.Flow_min+SetUp.Flow_max) + 0.5*(SetUp.Flow_max-SetUp.Flow_min) * ...
+%         cos(2*pi*(time0-SetUp.day_min_Flow)/365);
+    
+    Flow0=[gausswin(11,8)*SetUp.Flow_max]';
+    Flow02=[gausswin(12,8)*SetUp.Flow_max]';
+    Flow0(12)=Flow02(end);
+%     
     % Conversion here from m/year to m/hour:
     Flow0 = Flow0/365/24;
 

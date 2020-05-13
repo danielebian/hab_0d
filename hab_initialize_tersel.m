@@ -82,10 +82,10 @@
     % For the chemostat or mixed layer case, set up input values for all tracers
     % (typically, specify nutrients and set all biological terms to 0)
     %-------------------------------------------
-    % Nutrients:
-    BioPar.NO3_in = 29.8041;               % In mmolN/m3  
-    BioPar.Si_in = 36.7160;                % In mmolSi/m3  
-    BioPar.PO4_in = 2.2956;                % In mmolP/m3  
+    % Nutrients: of [yN=38;yS=34;xW=-124;xE=-117];
+    BioPar.NO3_in = 8.6865;               % In mmolN/m3  
+    BioPar.Si_in = 10.7468;                % In mmolSi/m3  
+    BioPar.PO4_in = 0.9525;                % In mmolP/m3  
     %-------------------------------------------
     % Biological pools:
     BioPar.PNF_in = 0;             % In mmolC/m3  
