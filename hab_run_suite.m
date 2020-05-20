@@ -152,7 +152,6 @@
     Suite = hab_collapse_suite(Suite,'rmOut',rmOut)
  end
 
- eval([snewname ' = Suite;']);
  % Rename the suite
  snewname = ['Suite_' Suite.name];
  if NameAdd ==1

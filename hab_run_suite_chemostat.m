@@ -47,7 +47,7 @@
  Suite.name = 'test';
  NameAdd = 1;  % 1 to add the parameter names to the Suite name
  Suite.base = hab;
- Suite.collapse = 0;    % Collapses the suite Output by taking average output
+ Suite.collapse = 1;    % Collapses the suite Output by taking average output
                         % and packaging the output into arrays with the size 
                         % of the Suite parameters (useful to save space, removes time-dependent output)
  %---------------------
@@ -57,14 +57,15 @@
  % module : module where parameters are initialized (BioPar or SetUp)
  % values : one vector of values for each parameter
  %---------------------
- Suite.params	= {'Flow'};
- Suite.module	= {'SetUp'};
-%Suite.params	= {'Flow','MaxPAR'};
-%Suite.module	= {'SetUp','SetUp'};
+%Suite.params	= {'Flow'};
+%Suite.module	= {'SetUp'};
+ Suite.params	= {'Flow','MaxPAR'};
+ Suite.module	= {'SetUp','SetUp'};
 
- Suite.Flow	= [0.05:0.05:1.2]/24;
+%Suite.Flow	= [0.05:0.05:1.2]/24;
 %Suite.Flow	= [0.0125:0.00625:1.2]/24;
-%Suite.MaxPAR	= exp(linspace(0,log(1000),20))/4.6;
+ Suite.Flow	= linspace(0.01,1.2,40)/24;
+ Suite.MaxPAR	= exp(linspace(0,log(900),40))/4.6;
  %-------------------------------------------------------
  Suite.nparam = length(Suite.params);
  Suite.dims = zeros(1,Suite.nparam);
@@ -153,7 +154,7 @@
  if Suite.collapse==1
     % WARNING: this removes the "Out" field
     rmOut = 1;	% 0: keeps Out; 1: removes Out
-    Suite = hab_collapse_suite(Suite,'rmOut',rmOut)
+    Suite = hab_collapse_suite(Suite,'rmOut',rmOut);
  end
 
  % Rename the suite
