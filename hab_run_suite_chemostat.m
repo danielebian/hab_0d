@@ -37,7 +37,7 @@
  % (use ['property',value] format)
  % NOTE: these should be variables not used as Suite Parameters
  new_BioPar = {};
- new_SetUp = {};
+ new_SetUp = {'EndTime',100*24};
 
  %-------------------------------------------------------
  % Define the suite of model runs
@@ -47,7 +47,7 @@
  Suite.name = 'test';
  NameAdd = 1;  % 1 to add the parameter names to the Suite name
  Suite.base = hab;
- Suite.collapse = 1;    % Collapses the suite Output by taking average output
+ Suite.collapse = 0;    % Collapses the suite Output by taking average output
                         % and packaging the output into arrays with the size 
                         % of the Suite parameters (useful to save space, removes time-dependent output)
  %---------------------
@@ -57,13 +57,14 @@
  % module : module where parameters are initialized (BioPar or SetUp)
  % values : one vector of values for each parameter
  %---------------------
-%Suite.params	= {'Flow'};
-%Suite.module	= {'SetUp'};
- Suite.params	= {'Flow','MaxPAR'};
- Suite.module	= {'SetUp','SetUp'};
+ Suite.params	= {'Flow'};
+ Suite.module	= {'SetUp'};
+%Suite.params	= {'Flow','MaxPAR'};
+%Suite.module	= {'SetUp','SetUp'};
 
- Suite.Flow	= [0.05:0.025:1.2]/24;
- Suite.MaxPAR	= exp(linspace(0,log(1000),20))/4.6;
+ Suite.Flow	= [0.05:0.05:1.2]/24;
+%Suite.Flow	= [0.0125:0.00625:1.2]/24;
+%Suite.MaxPAR	= exp(linspace(0,log(1000),20))/4.6;
  %-------------------------------------------------------
  Suite.nparam = length(Suite.params);
  Suite.dims = zeros(1,Suite.nparam);
@@ -155,7 +156,6 @@
     Suite = hab_collapse_suite(Suite,'rmOut',rmOut)
  end
 
- eval([snewname ' = Suite;']);
  % Rename the suite
  snewname = ['Suite_' Suite.name];
  if NameAdd ==1
@@ -164,7 +164,7 @@
        snewname = [snewname '_' Suite.params{indn}];
     end
  end
-
+ eval([snewname ' = Suite;']);
  % Save the suite
  eval(['save ' snewname ' ' snewname ';']);
 

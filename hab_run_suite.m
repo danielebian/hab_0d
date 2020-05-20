@@ -34,8 +34,9 @@
  % All Suite experiments will adopt these parameters
  % (use ['property',value] format)
  % NOTE: these should be variables not used as Suite Parameters
- new_BioPar = {'NO3_0',16,'Si_0',16,'PO4_0',1}; 
+ new_BioPar = {};
  new_SetUp = {};
+%new_SetUp = {'EndTime',100*24};
 
  %-------------------------------------------------------
  % Define the suite of model runs

@@ -21,7 +21,7 @@
  nvar = length(allvar);
 
  % Size of suite output:
- sdims = Suite.dims;
+ sdims = size(Suite.Out);
 
  % Collapses Suite output by taking a single value
  % Here default start and end time are NaNs => last value is taken

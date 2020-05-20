@@ -5,7 +5,7 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Add documentation here:
-% Simulates a batch culture with initial nutrients concentrations and constant conditions
+% Simulates a chemostat culture with initial nutrients concentrations and constant flow
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  %--------------------------------------------------------------------------------
@@ -14,8 +14,8 @@
 
  %-------------------------------
  % General setup
- SetUp.StartTime = 0*24;	% Duration of batch culture (hours)
- SetUp.EndTime = 50*24;	% Duration of batch culture (hours)
+ SetUp.StartTime = 0*24;	% Duration of chemostat culture (hours)
+ SetUp.EndTime = 50*24;		% Duration of chemostat culture (hours)
  SetUp.dt = 0.1;		% timestep (hours)
 
  %-------------------------------
@@ -27,7 +27,7 @@
  % Define the type and properties of light forcing
  SetUp.iLight = 1;	% Case (1) : constant light
 			% Case (2) : 12:12 light:darkness cycles
- SetUp.MaxPAR = 1 * 60/4.6;	% Photosynthetially Available Radiation (W/m2)
+ SetUp.MaxPAR = 1 * 100/4.6;	% Photosynthetially Available Radiation (W/m2)
 				% Note this is converted to umol/m2/s in terseleer case  
                         	% Note: 1 W/m2 ≈ 4.6 μmole.m2/s;     
 
@@ -35,7 +35,7 @@
  % Define the type and properties of light forcing
  SetUp.iTemp = 1;      % Case (1) : constant light
                        % Case (2) : variable temp (to be implemented if needed)
- SetUp.TempRef = 15;   % Temperature of the batch colture
+ SetUp.TempRef = 15;   % Temperature of the chemostat culture
 
  %--------------------------------------------------------------------------------
  % Here performs any substitution of default parameters based on user input (varargin)
