@@ -26,8 +26,8 @@
  % 'batch' : models a batch culture
  % 'chemostat' : models a chemostat setup
  % 'mixed_layer' : models a mixed layer setup
-  hab.ExpModule = 'batch';
- %hab.ExpModule = 'chemostat';
+ %hab.ExpModule = 'batch';
+  hab.ExpModule = 'chemostat';
  %hab.ExpModule = 'mixed_layer';
 
  % Here, if needed, overrides default parameters for BioModules and SetUp
@@ -66,7 +66,7 @@
  hab = hab_integrate(hab);
 
  % Some postprocessing
- hab = hab_postprocess(hab);
+ hab = hab_postprocess(hab,'dt_new',1);
 
  % Plotting
  iplot = 1;

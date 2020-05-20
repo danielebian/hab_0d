@@ -3,6 +3,8 @@
 % Versions: 0.1 : D. Bianchi, A. Moreno, 11-13-2019
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Same as hab_run_suite.m but set up for chemostat experiments specifically 
+%
 % Documentation:
 % This script allows to perform "sensitivity experiments", where an arbitrary number
 % of model parameters is varied, and the model run for each possible combinations of
@@ -22,19 +24,19 @@
 
  % Biological module
  %hab.BioModule = 'anderson';
-  hab.BioModule = 'terseleer';
+ %hab.BioModule = 'terseleer';
   hab.BioModule = 'bec_diat';
 
  % Experimental setup
  %hab.ExpModule = 'batch';
- %hab.ExpModule = 'chemostat';
-  hab.ExpModule = 'mixed_layer';
+  hab.ExpModule = 'chemostat';
+ %hab.ExpModule = 'mixed_layer';
 
  % Here, if needed, overrides default parameters for BioModules and SetUp
  % All Suite experiments will adopt these parameters
  % (use ['property',value] format)
  % NOTE: these should be variables not used as Suite Parameters
- new_BioPar = {'NO3_0',16,'Si_0',16,'PO4_0',1}; 
+ new_BioPar = {};
  new_SetUp = {};
 
  %-------------------------------------------------------
@@ -45,9 +47,9 @@
  Suite.name = 'test';
  NameAdd = 1;  % 1 to add the parameter names to the Suite name
  Suite.base = hab;
- Suite.collapse = 1; 	% Collapses the suite Output by taking average output
-			% and packaging the output into arrays with the size 
-			% of the Suite parameters (useful to save space, removes time-dependent output)
+ Suite.collapse = 1;    % Collapses the suite Output by taking average output
+                        % and packaging the output into arrays with the size 
+                        % of the Suite parameters (useful to save space, removes time-dependent output)
  %---------------------
  % Suite parameters
  % Specify the following:
@@ -55,11 +57,13 @@
  % module : module where parameters are initialized (BioPar or SetUp)
  % values : one vector of values for each parameter
  %---------------------
- Suite.params	= {'NO3_in','MLD_max'};
- Suite.module	= {'BioPar','SetUp'};
+%Suite.params	= {'Flow'};
+%Suite.module	= {'SetUp'};
+ Suite.params	= {'Flow','MaxPAR'};
+ Suite.module	= {'SetUp','SetUp'};
 
- Suite.NO3_in	= [8 16 32 64];
- Suite.MLD_max	= [50 100 200];
+ Suite.Flow	= [0.05:0.025:1.2]/24;
+ Suite.MaxPAR	= exp(linspace(0,log(1000),20))/4.6;
  %-------------------------------------------------------
  Suite.nparam = length(Suite.params);
  Suite.dims = zeros(1,Suite.nparam);
@@ -160,7 +164,7 @@
        snewname = [snewname '_' Suite.params{indn}];
     end
  end
- eval([snewname ' = Suite;']);
+
  % Save the suite
  eval(['save ' snewname ' ' snewname ';']);
 
