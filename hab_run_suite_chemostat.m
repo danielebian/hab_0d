@@ -153,7 +153,7 @@
  % If required, collapses Suite output
  if Suite.collapse==1
     % WARNING: this removes the "Out" field
-    rmOut = 1;	% 0: keeps Out; 1: removes Out
+    rmOut = 0;	% 0: keeps Out; 1: removes Out
     Suite = hab_collapse_suite(Suite,'rmOut',rmOut);
  end
 
