@@ -110,7 +110,7 @@
  % Diatom Losses  
  %%%%%%%%%%%%%%%
  % For losses, allows a "fraction" of phytoplankton to be preserved
- PPDiN = max(var.DiN-bio.bGrzThres,0);
+ PPDiN = max(var.DiN-bio.bGrzThresDi,0);
  % Lysis (this is the same as diat_loss in BEC)
  JLysDi = bio.lMortDi * PPDiN;
  % Partition Lysis to three components
@@ -120,13 +120,37 @@
  % Aggregation
  % Takes the minimum of a quadratic and linear terms
  JAggDi = max( bio.tAggDiMin*PPDiN , min( bio.tAggDiMax*PPDiN , bio.lMort2Di*PPDiN*PPDiN ) ); 
-%JAggDi = 0;
+ %JAggDi = 0;
  % Grazing
- JGrzDi = 0;
- % Partition grazing to different components
- JGrzDiPON = 0.26 * JGrzDi;
- JGrzDiDON = 0.13 * JGrzDi;
- JGrzDiDIN = 0.31 * JGrzDi;
+ if evar.MLD <= 100
+ bGrzThresDi=bio.bGrzThresDi;
+ elseif evar.MLD > 100 & evar.MLD < 200
+ bGrzThresDi=bio.bGrzThresDi*((200 + evar.MLD)/100);
+ else
+ bGrzThresDi=0;
+ end
+ PprimDi=max(var.DiN-bGrzThresDi,0); 
+ JGrzDi=bio.JgmaxDi*Tfunc*((var.ZN*PprimDi.^2)./(PprimDi.^2 + 0.81*(bio.bGrzZ^2))); %grazing loss for diatoms
+ JGrzZoo=bio.alphaGrzDi*JGrzDi; % grazed diatoms routed to new zooplankton biomass
+
+ % Partition grazing to different components -> DIFFERENT FROM BEC MODEL
+ % WHERE DEFINES A150-A161
+ JGrzDiPON = bio.JGrzDiPON * JGrzDi;
+ JGrzDiDON = bio.JGrzDiDON * JGrzDi;
+ JGrzDiDIN = bio.JGrzDiDIN * JGrzDi;
+ 
+ %%%%%%%%%%%%%%%
+ % Zooplakton Losses  
+ %%%%%%%%%%%%%%%
+ if evar.MLD <= 100
+ bThresZ=bio.bThres0Z;
+ elseif evar.MLD > 100 & evar.MLD < 200
+ bThresZ=bio.bThres0Z*((200 + evar.MLD)/100);
+ else
+ bThresZ=0;
+ end 
+ ZprimZ=max(var.ZN-bThresZ,0);
+ JLysZoo=bio.lMort2Z*Tfunc*(ZprimZ^2)+bio.lMortZ*Tfunc*ZprimZ;
 
  % Diatom Silica cycle
  %%%%%%%%%%%%%%%%%%%
@@ -321,6 +345,8 @@
  dPO4dt = bio.rPN * (- JPhotoDi + bio.iRcy * (JNH4DON + JRemPON + JNH4Lys + JNH4Grz));
  dSidt = - gQSiNDi * JPhotoDi + bio.iRcy * (JSiGrz + JSiLys + JRemPSi);  
  dFedt = - gQFeNDi * JPhotoDi + bio.iRcy * (JRemDOFe + JRemPOFe + QFeNDi * (JNH4Lys + JNH4Grz) + JGrzDiFe) - JScFe;
+ % Zooplankton 
+ dZNdt=JGrzZoo - JLysZoo;
  % Diatoms
  dDiNdt = JPhotoDi - (JGrzDi + JLysDi + JAggDi);
  dDiFedt = gQFeNDi * JPhotoDi - QFeNDi * (JGrzDi + JLysDi + JAggDi);
@@ -356,5 +382,6 @@
         dDiDAdt;...
         dDDAdt;...
         dPDAdt;...
+        dZNdt;...
         ];
 

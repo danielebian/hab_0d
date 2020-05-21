@@ -12,11 +12,11 @@
                     'DiN','DiFe','DiChl','DiSi', ... 
                     'DON','DOFe', ...
                     'PON','POFe','PSi', ...
-                    'DiDA','DDA','PDA'};
+                    'DiDA','DDA','PDA','ZN'};
  BioPar.nvar = length(BioPar.varnames);
 
  % Initialize biogeochemical variables (initial and boundary conditions)
- BioPar = hab_initialize_bec_diat(BioPar,hab.ExpModule);
+ BioPar = hab_initialize_bec_full(BioPar,hab.ExpModule);
 
  % Constants
  y2d = 365;
@@ -33,7 +33,7 @@
  BioPar.wsPOM = 25/24;		% sinking velocity in m/h (typically 25 m/d)
  
  % Stoichiometric ratios
- BioPar.rPC = 0.00855;		% stoichiometric ratio for PN P:C (Redfield = 1/106)
+ BioPar.rPC = 0.00855;      % stoichiometric ratio for PN P:C (Redfield = 1/106)
  BioPar.rNC = 0.137;		% stoichiometric ratio for PN N:C (Redfield = 16/106)
  BioPar.rPN = BioPar.rPC ./ BioPar.rNC; 	% stoichiometric ratio for PN P:N
  BioPar.rSiN = 0.137 ./ BioPar.rNC; 	% baseline Si:N Diatom uptake
@@ -59,6 +59,22 @@
  
  % Photoacclimation parameters
  BioPar.QNChlDi = 4;			% mgChl/mmolN
+ 
+ % Zooplankton parameters 
+ BioPar.iZoo = 1;
+ BioPar.bGrzZ=1.05*BioPar.rNC*BioPar.iZoo;              % Grazing coefficient, used in density dependent grazing modification mmol C/m 3 
+ BioPar.lMortZ=0.08/d2h;                % Zooplankton linear mortality  1/d
+ BioPar.lMort2Z=0.42/BioPar.rNC/d2h;  % Zooplankton quadratic mortality  1/(mmol C m 3 d) 
+ BioPar.bThres0Z=0.03*BioPar.rNC;        % Zooplankton threshold concentrations for mortality mmol C/m 3
+ 
+ BioPar.bGrzThresDi=0.02*BioPar.rNC*BioPar.iZoo;      % Diatom threshold concentration for grazing mmol C/m 3 
+ BioPar.alphaGrzDi=0.3*BioPar.iZoo;                   % Fraction of diatom grazing going to zooplankton no units 
+ BioPar.JgmaxDi=(1.95*BioPar.iZoo)/d2h;                    % Maximum grazing loss for diatoms 1/d
+ 
+ % Partition grazing to different components
+ BioPar.JGrzDiPON = 0.26;
+ BioPar.JGrzDiDON = 0.13;
+ BioPar.JGrzDiDIN = 0.31;
 
  % Losses parameters
  BioPar.lMortDi = 0.15/d2h;			% 1/day

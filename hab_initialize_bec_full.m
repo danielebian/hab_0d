@@ -27,7 +27,7 @@
     BioPar.DiDA_0 = 0;
     BioPar.DDA_0 = 0;
     BioPar.PDA_0 = 0;
-
+    BioPar.ZN_0 = 0;
     % For the chemostat or mixed layer case, set up input values for all tracers
     % (typically, specify nutrients and set all biological terms to 0)
     %-------------------------------------------
@@ -51,7 +51,7 @@
     BioPar.DiDA_in = 0;
     BioPar.DDA_in = 0;
     BioPar.PDA_in = 0;
-
+    BioPar.ZN_in = 0;
  case 'chemostat'
     % Model variables: set initial values
     %-------------------------------------------
@@ -75,7 +75,7 @@
     BioPar.DiDA_0 = 0;
     BioPar.DDA_0 = 0;
     BioPar.PDA_0 = 0;
-
+    BioPar.ZN_0 = 0;
     % For the chemostat or mixed layer case, set up input values for all tracers
     % (typically, specify nutrients and set all biological terms to 0)
     %-------------------------------------------
@@ -99,7 +99,7 @@
     BioPar.DiDA_in = 0;
     BioPar.DDA_in = 0;
     BioPar.PDA_in = 0;
-
+    BioPar.ZN_in = 0;
  case 'mixed_layer'
     % Model variables: set initial values
     %-------------------------------------------
@@ -123,7 +123,7 @@
     BioPar.DiDA_0 = 0;
     BioPar.DDA_0 = 0;
     BioPar.PDA_0 = 0;
-
+    BioPar.ZN_0 = 1.0;
     % For the chemostat or mixed layer case, set up input values for all tracers
     % (typically, specify nutrients and set all biological terms to 0)
     %-------------------------------------------
@@ -147,7 +147,7 @@
     BioPar.DiDA_in = 0;
     BioPar.DDA_in = 0;
     BioPar.PDA_in = 0;
-
+    BioPar.ZN_in = 0;
  otherwise
     error(['Crazy town! (physical SMS case not found)']);
  end

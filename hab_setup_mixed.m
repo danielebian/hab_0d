@@ -69,10 +69,10 @@
 
  %-------------------------------
  % Define the type and properties of mixing/upwelling flow
- SetUp.iFlow = 1;	% 1: constant flow
+ SetUp.iFlow = 2;	% 1: constant flow
                         % 2: idealized cycle
 			% 3: Observed cycle (California Current)
- SetUp.Flow0 = 0;  		% (iFlow=1) Rate of water flow at base of ML (m/y) (typically 100-1000?)
+ SetUp.Flow0 = 100;  		% (iFlow=1) Rate of water flow at base of ML (m/y) (typically 100-1000?)
  SetUp.day_min_Flow = 152;	% (iFlow=2) Day of the year with minimum Flow (June 1)
  SetUp.Flow_min = 0;		% (iFlow=2) Flow (m/y)
  SetUp.Flow_max = 200; 		% (iFlow=2) Flow (m/y)

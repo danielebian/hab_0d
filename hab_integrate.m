@@ -49,6 +49,8 @@
        sms_bio = hab_sms_tersel(hab,AllVar(:,indt-1),EnvVar(:,indt));
     case 'bec_diat'
        sms_bio = hab_sms_bec_diat(hab,AllVar(:,indt-1),EnvVar(:,indt));
+    case 'bec_bec_full'
+       sms_bio = hab_sms_bec_full(hab,AllVar(:,indt-1),EnvVar(:,indt));
     otherwise
        error(['Crazy town! (biological case not found)']);
     end

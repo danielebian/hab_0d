@@ -19,7 +19,8 @@
  % 'terseleer' : Terseleer Based on 2013 Paper
  %hab.BioModule = 'anderson';
 %  hab.BioModule = 'terseleer';
-  hab.BioModule = 'bec_diat';
+%   hab.BioModule = 'bec_diat';
+  hab.BioModule = 'bec_bec_full';
 
  % Experimental setup
  % Options:
@@ -46,6 +47,8 @@
     hab = hab_biopar_tersel(hab,new_BioPar{:});
  case 'bec_diat'
     hab = hab_biopar_bec_diat(hab,new_BioPar{:});
+ case 'bec_bec_full'
+    hab = hab_biopar_bec_full(hab,new_BioPar{:});
  otherwise
     error(['Crazy town! (biological case not found)']);
  end
@@ -80,11 +83,67 @@
        hab_plot_all(hab); %Plot model
     case 'bec_diat'
        hab_plot_all(hab); %Plot model
+    case 'bec_bec_full'
+       hab_plot_all(hab); %Plot model
     otherwise
        error(['Crazy town! (Processing not found)']);
     end
  end
- 
- 
- 
 
+%mass conservation
+
+varnames = setdiff(fieldnames(hab.Sol),'time','stable');
+suma=0;
+for indv=1:hab.BioPar.nvar 
+    vname = varnames{indv};
+    suma= suma +hab.Sol.(vname);
+end
+plot(suma)
+
+%peaks year 2-3
+
+time=datenum(2001,1,1,hab.SetUp.time,0,0);
+
+figure
+subplot 611
+plot(time((24*365 +1):2*(24*365)),hab.Sol.NO3((24*365 +1):2*(24*365)))
+hold on
+plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.NO3(2*(24*365) +1:3*(24*365)))
+title('NO3')
+grid on
+datetick('x','m')
+subplot 612
+plot(time((24*365 +1):2*(24*365)),hab.Sol.DiChl((24*365 +1):2*(24*365)))
+hold on
+plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.DiChl(2*(24*365) +1:3*(24*365)))
+title('DiChl')
+grid on
+datetick('x','m')
+subplot 613
+plot(time((24*365 +1):2*(24*365)),hab.Sol.DiN((24*365 +1):2*(24*365)))
+hold on
+plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.DiN(2*(24*365) +1:3*(24*365)))
+title('DiN')
+grid on
+datetick('x','m')
+subplot 614
+plot(time((24*365 +1):2*(24*365)),hab.Sol.ZN((24*365 +1):2*(24*365)))
+hold on
+plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.ZN(2*(24*365) +1:3*(24*365)))
+title('ZN')
+grid on
+datetick('x','m')
+subplot 615
+plot(time((24*365 +1):2*(24*365)),hab.SetUp.Env.Flow((24*365 +1):2*(24*365)))
+hold on
+plot(time(2*(24*365) +1:3*(24*365)),hab.SetUp.Env.Flow(2*(24*365) +1:3*(24*365)))
+title('Flow')
+grid on
+datetick('x','m')
+subplot 616
+plot(time((24*365 +1):2*(24*365)),hab.SetUp.Env.MLD((24*365 +1):2*(24*365)))
+hold on
+plot(time(2*(24*365) +1:3*(24*365)),hab.SetUp.Env.MLD(2*(24*365) +1:3*(24*365)))
+set(gca,'ydir','reverse')
+title('MLD')
+datetick('x','m')
