@@ -9,7 +9,7 @@
  % Adds path for local functions
  addpath ./functions
 
- % Sets the data file and fiolder:
+ % Sets the data file and folder:
  data_dir = '/Users/danielebianchi/AOS1/HAB/code/hab_0d_master/';
  data_file = 'chemostat_data_kudela_v0.xlsx';
 
@@ -67,7 +67,7 @@
  % Here, if needed, overrides default parameters for BioModules and SetUp
  % All Suite experiments will adopt these parameters
  % (use ['property',value] format)
- % NOTE: these should be variables not used as Suite Parameters
+ % NOTE: these should be variables not used as Series Parameters
  new_BioPar = {};
  new_SetUp = {'EndTime',100*24};
  %-------------------------------------------------------
