@@ -70,6 +70,13 @@
 
  % Some postprocessing
  hab = hab_postprocess(hab);
+ 
+ 
+ %mass conservation
+
+mass=hab.Sol.NO3 + hab.Sol.NH4 + hab.Sol.DiN + hab.Sol.DON + hab.Sol.PON; 
+figure
+plot(mass)
 
  % Plotting
  iplot = 1;
@@ -90,15 +97,7 @@
     end
  end
 
-%mass conservation
 
-varnames = setdiff(fieldnames(hab.Sol),'time','stable');
-suma=0;
-for indv=1:hab.BioPar.nvar 
-    vname = varnames{indv};
-    suma= suma +hab.Sol.(vname);
-end
-plot(suma)
 
 %peaks year 2-3
 

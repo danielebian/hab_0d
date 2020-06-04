@@ -28,6 +28,10 @@
     BioPar.DDA_0 = 0;
     BioPar.PDA_0 = 0;
     BioPar.ZN_0 = 0;
+    BioPar.SpN_0 = 0;
+    BioPar.SpFe_0 = 0;
+    BioPar.SpChl_0 = 0;
+    BioPar.SpSi_0 = 0;
     % For the chemostat or mixed layer case, set up input values for all tracers
     % (typically, specify nutrients and set all biological terms to 0)
     %-------------------------------------------
@@ -52,6 +56,10 @@
     BioPar.DDA_in = 0;
     BioPar.PDA_in = 0;
     BioPar.ZN_in = 0;
+    BioPar.SpN_in = 0;
+    BioPar.SpFe_in = 0;
+    BioPar.SpChl_in = 0;
+    BioPar.SpSi_in = 0;
  case 'chemostat'
     % Model variables: set initial values
     %-------------------------------------------
@@ -76,6 +84,10 @@
     BioPar.DDA_0 = 0;
     BioPar.PDA_0 = 0;
     BioPar.ZN_0 = 0;
+    BioPar.SpN_0 = 0;
+    BioPar.SpFe_0 = 0;
+    BioPar.SpChl_0 = 0;
+    BioPar.SpSi_0 = 0;
     % For the chemostat or mixed layer case, set up input values for all tracers
     % (typically, specify nutrients and set all biological terms to 0)
     %-------------------------------------------
@@ -100,6 +112,10 @@
     BioPar.DDA_in = 0;
     BioPar.PDA_in = 0;
     BioPar.ZN_in = 0;
+    BioPar.SpN_in = 0;
+    BioPar.SpFe_in = 0;
+    BioPar.SpChl_in = 0;
+    BioPar.SpSi_in = 0;
  case 'mixed_layer'
     % Model variables: set initial values
     %-------------------------------------------
@@ -124,6 +140,10 @@
     BioPar.DDA_0 = 0;
     BioPar.PDA_0 = 0;
     BioPar.ZN_0 = 1.0;
+    BioPar.SpN_0 = 1.0;
+    BioPar.SpFe_0 = 4e-5;
+    BioPar.SpChl_0 = 1.0;
+    BioPar.SpSi_0 = 1.0;
     % For the chemostat or mixed layer case, set up input values for all tracers
     % (typically, specify nutrients and set all biological terms to 0)
     %-------------------------------------------
@@ -135,10 +155,10 @@
     BioPar.Fe_in = 0.1;            % In nmolFe/m3  
     %-------------------------------------------
     % Biological pools:
-    BioPar.DiN_in = 0;
-    BioPar.DiFe_in = 0;
-    BioPar.DiChl_in = 0;
-    BioPar.DiSi_in = 0;
+    BioPar.DiN_in = 0.01;
+    BioPar.DiFe_in = 0.01/1000;
+    BioPar.DiChl_in = 0.01;
+    BioPar.DiSi_in = 0.01;
     BioPar.DON_in = 0;
     BioPar.DOFe_in = 0;
     BioPar.PON_in = 0;
@@ -147,7 +167,11 @@
     BioPar.DiDA_in = 0;
     BioPar.DDA_in = 0;
     BioPar.PDA_in = 0;
-    BioPar.ZN_in = 0;
+    BioPar.ZN_in = 0.01;
+    BioPar.SpN_in = 0.01;
+    BioPar.SpFe_in = 0.01/1000;
+    BioPar.SpChl_in = 0.01;
+    BioPar.SpSi_in = 0.01;
  otherwise
     error(['Crazy town! (physical SMS case not found)']);
  end

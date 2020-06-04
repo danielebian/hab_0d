@@ -239,7 +239,7 @@
     SetUp.Env.MLD = interpolate_annual_cycle_to_model(time0,MLD0,SetUp.time,int_mode);
  case 3
     %--------------
-    % Case (3) : Monthly Climatology from  de Boyer Montegut, 2004 of [yN=38;yS=34;xW=-124;xE=-117];
+    % Case (3) : Monthly Climatology from  de Boyer Montegut, 2004 of [N=38;S=34;W=-124;E=-117];
     % Assumes time si specified in DAYS (later converted to model's hours)
     % Assumes first day is Jan1, corresponding to time0=0
     time0 = [15 44 74 104 135 165 196 227 257 288 318 349];

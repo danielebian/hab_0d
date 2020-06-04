@@ -33,7 +33,7 @@
  case 'bec_bec_full'
     hab.Sol.pDA = hab.Sol.DiDA + hab.Sol.PDA;           % Sums diatom and particulate DA to get total
     hab.Sol.dDA = hab.Sol.DDA;           		% Just uses DDA (N units)
-  otherwise
+ otherwise
     error(['Crazy town! (Processing not found)']);
  end
 

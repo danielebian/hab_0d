@@ -31,23 +31,32 @@
  % Start Sources and Sinks here:
  %------------------------------------------------
 
- %%%%%%%%%%%%%%%%%%%
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % Photosynthesis  
- % Diatom N cycle
- %%%%%%%%%%%%%%%%%%%
+ % Diatom & Small Phyto. N cycle
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % Diatoms Chl:N ratio
  QChlNDi = var.DiChl ./ var.DiN;
+ % Small Phyto. Chl:N ratio
+ QChlNSp = var.SpChl ./ var.SpN;
  % Temperature dependence term
  Tfunc = bio.Q10^((evar.Temp-10)/10);
  % Nutrient limitation terms
- denomN = (1 + var.NO3/bio.KNO3 + var.NH4/bio.KNH4 ); 
- vDiNO3 = (var.NO3/bio.KNO3) ./ denomN;
- vDiNH4 = (var.NH4/bio.KNH4) ./ denomN;
- vDiPO4 = var.PO4 ./ (var.PO4 + bio.KPO4);
- vDiFe = var.Fe ./ (var.Fe + bio.KFe);
- vDiSi = var.Si ./ (var.Si + bio.KSi);
+ denomN = (1 + var.NO3/bio.KNO3Di + var.NH4/bio.KNH4Di ); 
+ vDiNO3 = (var.NO3/bio.KNO3Di) ./ denomN;
+ vDiNH4 = (var.NH4/bio.KNH4Di) ./ denomN;
+ vDiPO4 = var.PO4 ./ (var.PO4 + bio.KPO4Di);
+ vDiFe = var.Fe ./ (var.Fe + bio.KFeDi);
+ vDiSi = var.Si ./ (var.Si + bio.KSiDi);
+ 
+ vSpNO3 = (var.NO3/bio.KNO3Sp) ./ denomN;
+ vSpNH4 = (var.NH4/bio.KNH4Sp) ./ denomN;
+ vSpPO4 = var.PO4 ./ (var.PO4 + bio.KPO4Sp);
+ vSpFe = var.Fe ./ (var.Fe + bio.KFeSp);
+ 
  % Combined nutrient limitation
  NutLimDi = min([vDiNO3+vDiNH4, vDiPO4, vDiFe, vDiSi]);
+ NutLimSp = min([vSpNO3+vSpNH4, vSpPO4, vSpFe]);
  
  % Photosynthesis rate:
  % Differentiate culture case (constant light) from Mixed Layer case (depth-dependent light)
@@ -60,42 +69,58 @@
     % Note that since ML is well-mixed, the attenuation coefficient is
     % constant with depth, only PAR and PAR-dependent terms vary in the ML
     % Here uses BEC light attenuation coefficients and formulation
-    kPAR = hab.SetUp.kwPAR + bio.kcPAR * var.DiChl;
+    kPAR = hab.SetUp.kwPAR + bio.kcPAR * (var.DiChl + var.SpChl);
+   
     %-----------------------
     % 2. Estimates light in the water column on a vertical grid between [0,MLD]
     zPAR = linspace(0,evar.MLD,hab.SetUp.nzPAR);
     % Since light attenuation is constant in the ML, uses the exponential solution
     PAR = evar.PAR * exp(-kPAR*zPAR);
+    
     % 3. Calculates depth-dependent terms (photosynthetic rate and photoacclimation)
     % Note here that these variables are all depth dependent: 
     % PAR, LightFuncDi, rhoN, rhoChl, rhoPhotoAcc
     % Depth-dependent light limitation
-    numerL = bio.aLightDi * QChlNDi * PAR;
-    denomL = bio.muMaxDi * NutLimDi * Tfunc;
-    LightFuncDi = 1 - exp(-numerL./denomL);
+    numerLDi = bio.aLightDi * QChlNDi * PAR;
+    numerLSp = bio.aLightSp * QChlNSp * PAR;
+    denomLDi = bio.muMaxDi * NutLimDi * Tfunc;
+    denomLSp = bio.muMaxSp * NutLimSp * Tfunc;
+    LightFuncDi = 1 - exp(-numerLDi./denomLDi);
+    LightFuncSp = 1 - exp(-numerLSp./denomLSp);
     % Depth-dependent photosynthetic rate
-    rhoN = bio.muMaxDi * NutLimDi * Tfunc * LightFuncDi;
+    rhoNDi = bio.muMaxDi * NutLimDi * Tfunc * LightFuncDi;
+    rhoNSp = bio.muMaxSp * NutLimSp * Tfunc * LightFuncSp;
     % Depth-dependent rho-chl term of Geider et al., 1998
-    rhoChl = bio.QNChlDi * rhoN ./ (bio.aLightDi * QChlNDi * PAR); 
+    rhoChlDi = bio.QNChlDi * rhoNDi ./ (bio.aLightDi * QChlNDi * PAR); 
+    rhoChlSp = bio.QNChlSp * rhoNSp ./ (bio.aLightSp * QChlNSp * PAR);
     % Photoacclimation coefficient
-    rhoPhotoAcc = rhoChl .* rhoN/QChlNDi;
+    rhoPhotoAccDi = rhoChlDi .* rhoNDi/QChlNDi;
+    rhoPhotoAccSp = rhoChlSp .* rhoNSp/QChlNSp;
     % 4. Averages final light-dependent terms over the Mixed Layer
     % Here uses straight average, since dz is constant
-    rhoN = mean(rhoN);
-    rhoPhotoAcc = mean(rhoPhotoAcc);
+    rhoNDi = mean(rhoNDi);
+    rhoNSp = mean(rhoNSp);
+    rhoPhotoAccDi = mean(rhoPhotoAccDi);
+    rhoPhotoAccSp = mean(rhoPhotoAccSp);
  otherwise
     % In this case PAR is constant, with specified value
     PAR = evar.PAR;
-    numerL = bio.aLightDi * QChlNDi * evar.PAR;
-    denomL = bio.muMaxDi * NutLimDi * Tfunc;
+    numerLDi = bio.aLightDi * QChlNDi * evar.PAR;
+    numerLSp = bio.aLightSp * QChlNSp * evar.PAR;
+    denomLDi = bio.muMaxDi * NutLimDi * Tfunc;
+    denomLSp = bio.muMaxSp * NutLimSp * Tfunc;
     % Light dependence of photosynthesis
-    LightFuncDi = 1 - exp(-numerL/denomL);
+    LightFuncDi = 1 - exp(-numerLDi/denomLDi);
+    LightFuncSp = 1 - exp(-numerLSp/denomLSp);
     % Depth-dependent photosynthetic rate
-    rhoN = bio.muMaxDi * NutLimDi * Tfunc * LightFuncDi;
+    rhoNDi = bio.muMaxDi * NutLimDi * Tfunc * LightFuncDi;
+    rhoNSp = bio.muMaxSp * NutLimSp * Tfunc * LightFuncSp;
     % Photoacclimation rho-chl term of Geider et al., 1998
-    rhoChl = bio.QNChlDi * rhoN / (bio.aLightDi * QChlNDi * PAR); 
+    rhoChlDi = bio.QNChlDi * rhoNDi / (bio.aLightDi * QChlNDi * PAR); 
+    rhoChlSp = bio.QNChlSp * rhoNSp / (bio.aLightSp * QChlNSp * PAR); 
     % Photoacclimation coefficient
-    rhoPhotoAcc = rhoChl * rhoN/QChlNDi;
+    rhoPhotoAccDi = rhoChlDi * rhoN/QChlNDi;
+    rhoPhotoAccSp = rhoChlSp * rhoN/QChlNSp;
  end
 
  %%%%%%%%%%%%%%%%%%%%
@@ -103,25 +128,21 @@
  % Photoacclimation
  % (Diatom Chl cycle)
  %%%%%%%%%%%%%%%%%%%%
- JPhotoDi = rhoN * var.DiN;
- JPhotoAccDi = rhoPhotoAcc * var.DiChl;
+ JPhotoDi = rhoNDi * var.DiN;
+ JPhotoAccDi = rhoPhotoAccDi * var.DiChl;
+ 
+ %%%%%%%%%%%%%%%%%%%%%%%%%%
+ % Photosynthesis &
+ % Photoacclimation
+ % (Small Phyto. Chl cycle)
+ %%%%%%%%%%%%%%%%%%%%%%%%%%
+ JPhotoSp = rhoNSp * var.SpN;
+ JPhotoAccSp = rhoPhotoAccSp * var.SpChl;
 
  %%%%%%%%%%%%%%%
  % Diatom Losses  
  %%%%%%%%%%%%%%%
  % For losses, allows a "fraction" of phytoplankton to be preserved
- PPDiN = max(var.DiN-bio.bGrzThresDi,0);
- % Lysis (this is the same as diat_loss in BEC)
- JLysDi = bio.lMortDi * PPDiN;
- % Partition Lysis to three components
- JLysDiPON = 0.05 * JLysDi;
- JLysDiDON = (1 - bio.fLab) * 0.95 * JLysDi;
- JLysDiDIN = bio.fLab * 0.95 * JLysDi;
- % Aggregation
- % Takes the minimum of a quadratic and linear terms
- JAggDi = max( bio.tAggDiMin*PPDiN , min( bio.tAggDiMax*PPDiN , bio.lMort2Di*PPDiN*PPDiN ) ); 
- %JAggDi = 0;
- % Grazing
  if evar.MLD <= 100
  bGrzThresDi=bio.bGrzThresDi;
  elseif evar.MLD > 100 & evar.MLD < 200
@@ -129,19 +150,62 @@
  else
  bGrzThresDi=0;
  end
- PprimDi=max(var.DiN-bGrzThresDi,0); 
- JGrzDi=bio.JgmaxDi*Tfunc*((var.ZN*PprimDi.^2)./(PprimDi.^2 + 0.81*(bio.bGrzZ^2))); %grazing loss for diatoms
- JGrzZoo=bio.alphaGrzDi*JGrzDi; % grazed diatoms routed to new zooplankton biomass
+ PPDiN=max(var.DiN-bGrzThresDi,0);  
+ % Lysis (this is the same as diat_loss in BEC)
+ JLysDi = bio.lMortDi * PPDiN;
+ % Partition Lysis to three components
+ JLysDiPON = bio.aPOCDi * JLysDi;
+ JLysDiDON = (1 - bio.fLab) * (1-bio.aPOCDi) * JLysDi;
+ JLysDiDIN = bio.fLab * (1-bio.aPOCDi) * JLysDi;
+ % Aggregation
+ % Takes the minimum of a quadratic and linear terms
+ JAggDi = max( bio.tAggDiMin*PPDiN , min( bio.tAggDiMax*PPDiN , bio.lMort2Di*PPDiN*PPDiN ) ); 
+ %JAggDi = 0;
+ % Grazing
+ JGrzDi=bio.JgmaxDi*Tfunc*((var.ZN*PPDiN.^2)./(PPDiN.^2 + 0.81*(bio.bGrzZ^2)));
+ JGrzZDi=bio.aGrzDi*JGrzDi;
 
- % Partition grazing to different components -> DIFFERENT FROM BEC MODEL
- % WHERE DEFINES A150-A161
+ % Partition grazing to different components
  JGrzDiPON = bio.JGrzDiPON * JGrzDi;
  JGrzDiDON = bio.JGrzDiDON * JGrzDi;
  JGrzDiDIN = bio.JGrzDiDIN * JGrzDi;
  
- %%%%%%%%%%%%%%%
+ %%%%%%%%%%%%%%%%%%%%%
+ % Small Phyto. Losses  
+ %%%%%%%%%%%%%%%%%%%%%
+ % For losses, allows a "fraction" of phytoplankton to be preserved
+ if evar.MLD <= 100
+ bGrzThresSp=bio.bGrzThresSp;
+ elseif evar.MLD > 100 & evar.MLD < 200
+ bGrzThresSp=bio.bGrzThresSp*((200 + evar.MLD)/100);
+ else
+ bGrzThresSp=0;
+ end
+ PPSpN=max(var.SpN-bGrzThresSp,0);  
+ 
+ % Lysis
+ JLysSp = bio.lMortSp * PPSpN;
+ % Partition Lysis to three components
+ JLysSpPON = 0.1 * JLysSp; % Note: Qcaco3CSp=0.1; 
+ JLysSpDON = (1 - bio.fLab) * ( JLysSp - JLysSpPON);
+ JLysSpDIN = bio.fLab * ( JLysSp - JLysSpPON);
+ 
+ % Aggregation
+ % Takes the minimum of a quadratic and linear terms
+ JAggSp = min( bio.tAggSpMax*PPSpN , bio.lMort2Sp*PPSpN*PPSpN ); 
+ %JAggSp = 0;
+ % Grazing
+ JGrzSp=bio.JgmaxSp*Tfunc*((var.ZN*PPSpN.^2)./(PPSpN.^2 + (bio.bGrzZ^2)));
+ JGrzZSp=bio.aGrzSp*JGrzSp; 
+
+ % Partition grazing to different components
+ JGrzSpPON = max([0.4*0.1,min([0.18*PPSpN,bio.JGrzSpPON])]) * JGrzSp; % Note: Qcaco3CmaxSp = 0.4; Qcaco3CSp=0.1; 
+ JGrzSpDON = bio.JGrzSpDON * JGrzSp - JGrzSpPON;
+ JGrzSpDIN = bio.JGrzSpDIN * JGrzSp;
+ 
+ %%%%%%%%%%%%%%%%%%%
  % Zooplakton Losses  
- %%%%%%%%%%%%%%%
+ %%%%%%%%%%%%%%%%%%%
  if evar.MLD <= 100
  bThresZ=bio.bThres0Z;
  elseif evar.MLD > 100 & evar.MLD < 200
@@ -149,11 +213,20 @@
  else
  bThresZ=0;
  end 
- ZprimZ=max(var.ZN-bThresZ,0);
- JLysZoo=bio.lMort2Z*Tfunc*(ZprimZ^2)+bio.lMortZ*Tfunc*ZprimZ;
+ ZPN=max(var.ZN-bThresZ,0);
+ JLysZ=bio.lMort2Z*Tfunc*(ZPN^2)+bio.lMortZ*Tfunc*ZPN;
+ 
+ % Partition zooplankton to different components
+ fdZ=((0.1333)*JGrzDi + (0.0333)*JGrzSp)/(JGrzDi+JGrzSp);
+ if isnan(fdZ)==1
+ fdZ=0;
+ end
+ JLysZPON = fdZ*JLysZ;
+ JLysZDON = (1-bio.fLab)*(1-fdZ)*JLysZ;
+ JLysZDIN = (bio.fLab)*(1-fdZ)*JLysZ;
 
  % Diatom Silica cycle
- %%%%%%%%%%%%%%%%%%%
+ %%%%%%%%%%%%%%%%%%%%%
  % Si:N  Ratio for Diatom Si losses
  QSiNDi = min( var.DiSi/var.DiN, bio.rSiNmax);
  % Baseline uptake value
@@ -163,16 +236,16 @@
  % Silicon
  if var.Fe == 0
     gQSiNDi = bio.rSiNmax;
- elseif (0 < var.Fe < 2*bio.KFe) & (var.Si > 2*bio.KSi)
+ elseif (0 < var.Fe < 2*bio.KFeDi) & (var.Si > 2*bio.KSiDi)
     gQSiNDi = min(bio.rSiNmax , ...
-                  ((bio.rSiN * 2.5 * 2 * bio.KFe/var.Fe) - bio.rSiN * (2.5 - 1)));
+                  ((bio.rSiN * 2.5 * 2 * bio.KFeDi/var.Fe) - bio.rSiN * (2.5 - 1)));
  else
     gQSiNDi = bio.rSiN;
  end
  % Overrides values at low Si
- if var.Si < 2*bio.KSi
+ if var.Si < 2*bio.KSiDi
     gQSiNDi = max( bio.rSiNmin, ...
-                  (gQSiNDi * var.Si/(2 * bio.KSi)));
+                  (gQSiNDi * var.Si/(2 * bio.KSiDi)));
  end
 
  %%%%%%%%%%%%%%%%%%%
@@ -181,13 +254,26 @@
  % Diatom biomass Fe:N
  QFeNDi = var.DiFe / var.DiN;
  % Fe:N ratio for growth
- if (var.Fe < 2 * bio.KFe)
-    gQFeNDi = max( bio.rFeNmin, ... 
-                   bio.rFeN * var.Fe /(2 * bio.KFe));
+ if (var.Fe < 2 * bio.KFeDi)
+    gQFeNDi = max( bio.rFeNminDi, ... 
+                   bio.rFeNDi * var.Fe /(2 * bio.KFeDi));
  else
-    gQFeNDi = bio.rFeN;
+    gQFeNDi = bio.rFeNDi;
  end
 
+ %%%%%%%%%%%%%%%%%%%%%%%%%
+ % Small Phyto. Iron cycle
+ %%%%%%%%%%%%%%%%%%%%%%%%%
+ % Small Phyto. biomass Fe:N
+ QFeNSp = var.SpFe / var.SpN;
+ % Fe:N ratio for growth
+ if (var.Fe < 2 * bio.KFeSp)
+    gQFeNSp = max( bio.rFeNminSp, ... 
+                   bio.rFeNSp * var.Fe /(2 * bio.KFeSp));
+ else
+    gQFeNSp = bio.rFeNSp;
+ end
+ 
  %%%%%%%%%%%%%%%%%%%%%
  % Inorganic nutrients
  %%%%%%%%%%%%%%%%%%%%%
@@ -199,10 +285,16 @@
  vDiTot = vDiNO3 + vDiNH4;
  JNO3Di = vDiNO3/vDiTot * JPhotoDi;
  JNH4Di = vDiNH4/vDiTot * JPhotoDi;
- % Production of NH4 by Diatom Lysis - equivalent to loss to DIC in BEC
- JNH4Lys =  JLysDiDIN;
+ 
+ % Split uptake between NO3 and NH4
+ vSpTot = vSpNO3 + vSpNH4;
+ JNO3Sp = vSpNO3/vSpTot * JPhotoSp;
+ JNH4Sp = vSpNH4/vSpTot * JPhotoSp;
+ 
+ % Production of NH4 by Spatom Lysis - equivalent to loss to DIC in BEC
+ JNH4Lys =  JLysDiDIN + JLysSpDIN + JLysZDIN;
  % Production of NH4 by Grazing - equivalent to loss to DIC in BEC
- JNH4Grz =  JGrzDiDIN;
+ JNH4Grz = JGrzDiDIN + JGrzSpDIN;
  % Production of NH4 by DON - AFTER DON section
  % Production of NH4 by PON - AFTER PON section
  
@@ -244,7 +336,8 @@
  % Grazing sources of Fe to the dissolved pool
  % (here assumes zooplankton have always less Fe:N ratios than diatoms, 
  %  so excess grazing goes to dissolved Fe)
- JGrzDiFe = JGrzDi * (QFeNDi - bio.rFeNzoo); 
+ JGrzDiFe = JGrzDi * (QFeNDi - bio.rFeNZ); 
+ JGrzSpFe = JGrzSp * (QFeNSp - bio.rFeNZ); 
  
  %%%%%%%%%%%%%%%%%%%%%
  % DOM/POM
@@ -254,11 +347,11 @@
  % DON and DOFe cycles
  %%%%%%%%%%%%%%%%%%%%% 
  % DON production
- JProdDON = JLysDiDON + JGrzDiDON;
+ JProdDON = JLysDiDON + JLysSpDON + JLysZDON +JGrzDiDON + JGrzSpDON;
  % DON Remineralization
  JRemDON = bio.rDOM * var.DON;
  % DOFe productiom
- JProdDOFe = QFeNDi * (JLysDiDON + JGrzDiDON); 
+ JProdDOFe = QFeNDi * (JLysDiDON + JLysSpDON + JLysZDON +JGrzDiDON + JGrzSpDON); 
  % DOFe remineralization
  JRemDOFe = bio.rDOM * var.DOFe;
 
@@ -266,9 +359,9 @@
  % PON, POFe and PSi cycles
  %%%%%%%%%%%%%%%%%%%%%%%%%%
  % PON production
- JProdPON = JLysDiPON + JAggDi + JGrzDiPON;
+ JProdPON = JLysDiPON + JLysSpPON + JLysZPON +JAggDi +JAggSp + JGrzDiPON + JGrzSpPON;
  % POFe production
- JProdPOFe = QFeNDi * (JLysDiPON + JAggDi + JGrzDiPON) + 0.1 * JScFe;
+ JProdPOFe = QFeNDi * (JLysDiPON + JLysSpPON + JLysZPON + JAggDi +JAggSp + JGrzDiPON + JGrzSpPON) + 0.1 * JScFe;
  % PSi production
  % For grazed diatom Si, 50% is remineralized
  JProdPSi = QSiNDi * (0.5 * JGrzDi + JAggDi + 0.05 * JLysDi);
@@ -340,18 +433,22 @@
  % 'DON','DOFe','PON','POFe','PSi','DiDA','DDA','PDA'
  % Dissolved Inorganic Nutrients
  % NOTE: the bio.iRcy term allows recycling of nutrients
- dNO3dt = - JNO3Di;
- dNH4dt = - JNH4Di + bio.iRcy * (JNH4Lys + JNH4Grz + JNH4DON + JNH4PON);
- dPO4dt = bio.rPN * (- JPhotoDi + bio.iRcy * (JNH4DON + JRemPON + JNH4Lys + JNH4Grz));
+ dNO3dt = - JNO3Di - JNO3Sp;
+ dNH4dt = - JNH4Di -JNH4Sp + bio.iRcy * (JNH4Lys + JNH4Grz + JNH4DON + JNH4PON);
+ dPO4dt = bio.rPN * (- JPhotoDi -JPhotoSp + bio.iRcy * (JNH4DON + JRemPON + JNH4Lys + JNH4Grz));
  dSidt = - gQSiNDi * JPhotoDi + bio.iRcy * (JSiGrz + JSiLys + JRemPSi);  
- dFedt = - gQFeNDi * JPhotoDi + bio.iRcy * (JRemDOFe + JRemPOFe + QFeNDi * (JNH4Lys + JNH4Grz) + JGrzDiFe) - JScFe;
+ dFedt = - gQFeNDi * JPhotoDi - gQFeNSp * JPhotoSp + bio.iRcy * (JRemDOFe + JRemPOFe + (QFeNDi+QFeNSp) * (JNH4Lys + JNH4Grz) + JGrzDiFe + JGrzSpFe) - JScFe;
  % Zooplankton 
- dZNdt=JGrzZoo - JLysZoo;
+ dZNdt=JGrzZDi + JGrzZSp - JLysZ;
  % Diatoms
  dDiNdt = JPhotoDi - (JGrzDi + JLysDi + JAggDi);
  dDiFedt = gQFeNDi * JPhotoDi - QFeNDi * (JGrzDi + JLysDi + JAggDi);
  dDiChldt = JPhotoAccDi - QChlNDi * (JGrzDi + JLysDi + JAggDi);
  dDiSidt = gQSiNDi * JPhotoDi - QSiNDi * (JGrzDi + JLysDi + JAggDi);
+ % Small Phyto.
+ dSpNdt = JPhotoSp - (JGrzSp + JLysSp + JAggSp);
+ dSpFedt = gQFeNSp * JPhotoSp - QFeNSp * (JGrzSp + JLysSp + JAggSp);
+ dSpChldt = JPhotoAccSp - QChlNSp * (JGrzSp + JLysSp + JAggSp);
  % Dissolved Matter
  dDONdt = JProdDON - JRemDON;
  dDOFedt = JProdDOFe - JRemDOFe;
@@ -383,5 +480,7 @@
         dDDAdt;...
         dPDAdt;...
         dZNdt;...
-        ];
+        dSpNdt;...
+        dSpFedt;...
+        dSpChldt];
 
