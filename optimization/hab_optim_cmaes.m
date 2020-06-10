@@ -1,12 +1,14 @@
 % Adds CMAES subroutine:
- hab_root = '/Users/danielebianchi/AOS1/HAB/code/hab_0d_200116/';
+ hab_root = '/Users/danielebianchi/AOS1/HAB/code/hab_0d_master/';
  addpath([hab_root])
  addpath([hab_root 'functions/'])
- addpath([hab_root 'CMA_ES/'])
  addpath([hab_root 'optimization/'])
+ addpath([hab_root 'optimization/cma_es/'])
 
 % Handles output directory
- OptName = 'Optimization_Test_initial_concentr_v2';
+% Folder name (will add date to it)
+ OptName = 'Optimization_Test_chemostat_series_v1';
+% Long name for the optimization (will be saved in output structure)
  OptNameLong = 'Test optimization';
  curdir = pwd;
  DateNow = hab_getDate();
@@ -15,30 +17,42 @@
  mkdir([hab_root 'optimOut'],savedir);
  cd([hab_root 'optimOut/' savedir]);
 
+%-------------------------------------------------------------------
+% Specifies Cost Function:
+% -------------------------
+% This determines the setup and type of experiment(s) run, and what cost
+% function is calculated for the optimization
+% Note that all the details will be in the cost function, which can be used to run
+% all sorts of configurations, as long as it produces a single "cost" number in the end 
+% (e.g. it can run individual batches, chemostats, series of chemostats etc.)
+% -------------------------
+% Optimization of batch experiments based on Fehling Si-limited data:
+%FunName = 'optim_minimize_batch_SiLim';
+% -------------------------
+% Optimization of Kudela's series of chemostat experiments, using the data
+% in /data/chemostat_data_kudela_v1.xlsx;
+ FunName = 'optim_minimize_chemostat_series';
+%-------------------------------------------------------------------
+% Parallelization:
+% -------------------------
+% iParallel = 0 : runs on a single processor, or in series
+% iParallel = 1 : uses parallel capability of CMAES algorithms
+%                 NOTE: this will call a parallelized version of the cost function
+%                 which evaluates multiple costs simulataneoulsy
+ iParallel = 0;
+%-------------------------------------------------------------------
+
 % Matrix of parameters for optimization
 % Format: 	name 		module		min_value 	max_value	
  AllParam = {
-%               'alpha',	'BioPar',	0.012/2,	0.012*2;	...
-%               'kmax',		'BioPar',	0.12/2,		0.12*2;	...
-%               'mumax',	'BioPar',	0.05/2,		0.05*2;	...
-%               'klys',		'BioPar',	0.0016/2,	0.0016*2;	...
-%               'kexc',		'BioPar',	0.001/2,	0.001*2;	...
-%               'maint',	'BioPar',	0.0004/2,	0.0004*2;	...
-%               'sPNRmax',	'BioPar',	0.1/2,		0.1*2;		...
-%               'kPNRcat',	'BioPar',	0.06/2,		0.06*2;	...
-%               'kDA',		'BioPar',	0.0002/2,	0.0002*2;	...
-%               'kass',		'BioPar',	0.06/2,		0.06*2;	...
-%               'KNO3',		'BioPar',	0.5/2,		0.5*2;		...
-%               'KPO4',		'BioPar',	0.3/2,		0.03*2;	...
-%               'KSi',		'BioPar',	0.6/2,		0.6*2;		...
-%               'ePNFcost',	'BioPar',	0.8/2,		0.8*2;		...
-%               'rNC',		'BioPar',	0.2/2,		0.2*2;		...
+                'beta',		'BioPar',	0.1*0.137/10,	0.1*0.137*10;	...
+                'gamma',	'BioPar',	2/5,		2*5;		...
 %               'rSiC',		'BioPar',	0.2/2,		0.2*2;		...
 %               'rPC',		'BioPar',	0.015/2,	0.015*2;	...
 %               'rNCDA',	'BioPar',	0.07/2,		0.07*2;	...
-                'NO3_0',	'BioPar',	0,		2000;		...
-                'Si_0',		'BioPar',	0,		2000;		...
-                'PO4_0',	'BioPar',	0,		125;		...
+%               'NO3_0',	'BioPar',	0,		2000;		...
+%               'Si_0',		'BioPar',	0,		2000;		...
+%               'PO4_0',	'BioPar',	0,		125;		...
                 };
 
  ParNames = AllParam(:,1);
@@ -73,21 +87,22 @@
  ParSigma = ParRange./ParNorm/sqrt(12);
 
 % Options
- optn.EvalParallel = '0';
+ optn.EvalParallel = num2str(iParallel);
  optn.LBounds = (ParMin - ParMin) ./ ParNorm;
  optn.UBounds = (ParMax - ParMin) ./ ParNorm;
- optn.MaxFunEvals = 25000;
+ optn.MaxFunEvals = 5000;
 
 % Enables parallelization
 % Note, the # of cores should be the same as the population size of the CMAES: 
 % Popul size: 4 + floor(3*log(nPar))
  if strcmp(optn.EvalParallel,'1')
-    FunName = 'optim_minimize_batch_SiLim_parallel';
+    FunName = [FunName '_parallel'];
     delete(gcp('nocreate'))
-    nproc = 12;
+    % Specifies the number of individual cores needed for parrallelization
+    % This should match the number of independent calls for each instance of CMAES 
+   %nproc = 12;
+    nproc = 4 + floor(3*log(nPar));
     ThisPool = parpool('local',nproc);
- else
-    FunName = 'optim_minimize_batch_SiLim';
  end
 
  FunArg.ParNames = ParNames;

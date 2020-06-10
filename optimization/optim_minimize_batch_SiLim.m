@@ -100,9 +100,4 @@
    disp(['Cost ' num2str(tcost) '; evaluation runtime: ' num2str(tt) ' seconds']);
    disp(['--------------------------------------------------------------------']);
  end
-
-%if tcost<0.16
-%   keyboard
-%end
-
  
