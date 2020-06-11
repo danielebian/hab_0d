@@ -68,8 +68,8 @@
  % All Suite experiments will adopt these parameters
  % (use ['property',value] format)
  % NOTE: these should be variables not used as Series Parameters
+%new_BioPar = {'beta',0.009773,'gamma',0.4};
  new_BioPar = {};
-%new_BioPar = {'beta',0.004142,'gamma',0.4};
  new_SetUp = {'EndTime',100*24};
  %-------------------------------------------------------
 

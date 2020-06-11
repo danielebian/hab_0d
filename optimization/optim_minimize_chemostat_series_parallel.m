@@ -1,4 +1,4 @@
- function tcost = optim_minimize_chemostat_parallel(ParStart,FunArg)
+ function mcost = optim_minimize_chemostat_parallel(ParStart,FunArg)
 
  %---------------------
  % Code specific to OPTIMIZATION
@@ -31,17 +31,19 @@
     % Based on the code and options in hab_run_chemostat_series.m
     %-------------------------------------------------------
     % Adds path for local functions
-    addpath ./functions
+    % addpath ./functions
    
     % Sets the data file and folder:
     data_dir = '/Users/danielebianchi/AOS1/HAB/code/hab_0d_master/data/';
+    %data_dir = '/data/project1/dbianchi/HAB/code/hab_0d/data/';
     data_file = 'chemostat_data_kudela_v1.xlsx';
    
     % Number of experiments to run
     nruns = 42;
    
     % Initialize the model
-    clear Series;
+    %clear Series;
+     Series = struct('EmptyField',0);
     %close all;
    
     % Sets the number of chemostat experiments to be run:
@@ -64,8 +66,9 @@
     % Code specific to CHEMOSTAT SERIES
     %-------------------------------------------------------
     % Read the chemostat data for all experiments to be run
-   %disp(['Loading input table : ' data_file ]);
-    tmp = readcell([data_dir data_file]);
+    % Uses a specific "dummy" function to load data within parfor loop
+    % to avoid transparency errors
+    tmp = par_readcell([data_dir data_file]);
    
     % Assumptions on input table setup:
     % code         dilution        PO4_in          ...
@@ -108,9 +111,9 @@
     for indp=1:nparam
        switch ParModule{indp}
        case 'BioPar'
-          arg_BioPar = [arg_BioPar ParNames(indp) ParVal(indp)];
+          arg_BioPar = [arg_BioPar ParNames(indp) ParVal(indp,indm)];
        case 'SetUp'
-          arg_SetUp = [arg_SetUp ParNames(indp) ParVal(indp)];
+          arg_SetUp = [arg_SetUp ParNames(indp) ParVal(indp,indm)];
        otherwise
           error(['module ' Suite.module{ipar}  ' is not valid']);
        end
@@ -122,6 +125,8 @@
     % Loop through all experiments
     for indr=1:nruns
    
+       % clear hab;
+       hab = struct('EmptyField',0);
        % Initialize each run
        hab.BioModule = Series.BioModule;
        hab.ExpModule = Series.ExpModule;
@@ -214,4 +219,3 @@
     end
 
  end	% parfor indm
-       

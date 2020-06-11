@@ -1,6 +1,7 @@
 % Adds CMAES subroutine:
  hab_root = '/Users/danielebianchi/AOS1/HAB/code/hab_0d_master/';
  addpath([hab_root])
+ addpath([hab_root 'data/'])
  addpath([hab_root 'functions/'])
  addpath([hab_root 'optimization/'])
  addpath([hab_root 'optimization/cma_es/'])

@@ -26,16 +26,17 @@
  % 'batch' : models a batch culture
  % 'chemostat' : models a chemostat setup
  % 'mixed_layer' : models a mixed layer setup
- %hab.ExpModule = 'batch';
-  hab.ExpModule = 'chemostat';
+  hab.ExpModule = 'batch';
+ %hab.ExpModule = 'chemostat';
  %hab.ExpModule = 'mixed_layer';
 
  % Here, if needed, overrides default parameters for BioModules and SetUp
  % The experiment will adopt these parameters, overriding defaults
  % (use ['property',value] format)
  % (leave an empty cell array {} for default)
+ %new_BioPar = {'beta',0.0027,'gamma',0.0632};
+ %new_BioPar = {'NO3_0',16,'Si_0',16,'PO4_0',1};
  new_BioPar = {};
- % new_BioPar = {'NO3_0',16,'Si_0',16,'PO4_0',1};
  new_SetUp = {};
 
  % Initialize biological parameters
