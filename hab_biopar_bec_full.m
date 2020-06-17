@@ -1,4 +1,4 @@
- function hab = hab_biopar_tersel(hab,varargin)
+ function hab = hab_biopar_bec_full(hab,varargin)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HAB_0D initialization of biologial parameters
 % Versions: 0.1 : D. Bianchi, A. Moreno, 11-13-2019
@@ -31,6 +31,7 @@
  BioPar.iRcy = 1;
 
  % Sinking velocity per POM (for mixed layer case only)
+ BioPar.iwsPOM = 1;         % add 0 to test conservation of mass
  BioPar.wsPOM = 25/24;		% sinking velocity in m/h (typically 25 m/d)
  
  % Stoichiometric ratios

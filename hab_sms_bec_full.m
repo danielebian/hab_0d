@@ -1,4 +1,4 @@
- function sms = hab_sms_tersel(hab,Var,EnvVar)
+ function sms = hab_sms_bec_full(hab,Var,EnvVar)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HAB_0D SMS for Anderson's model
 % Versions: 0.1 : D. Bianchi, A. Moreno, 11-13-2019
@@ -11,11 +11,12 @@
  % Preliminary processing
  nvar = hab.BioPar.nvar;        % number of model state variables
  % Create a structure with current state variables, for simplicity 
+ varnames=hab.BioPar.varnames;
  for indv=1:nvar
    %var.(hab.BioPar.varnames{indv}) = Var(indv);
     % If a variable is negative, it will be set to zero (or to a very small number)
    %var.(hab.BioPar.varnames{indv}) = max(1e-6,Var(indv));
-    var.(hab.BioPar.varnames{indv}) = max(0,Var(indv));
+    var.(hab.BioPar.varnames{indv}) = max(0,Var(indv));   
  end
  
  nevar = hab.SetUp.nevar;        % number of environemntal forcing variables
@@ -214,16 +215,16 @@
  bThresZ=0;
  end 
  ZPN=max(var.ZN-bThresZ,0);
- JLysZ=bio.lMort2Z*Tfunc*(ZPN^2)+bio.lMortZ*Tfunc*ZPN;
+ JlZ=bio.lMort2Z*Tfunc*(ZPN^2)+bio.lMortZ*Tfunc*ZPN;
  
  % Partition zooplankton to different components
  fdZ=((0.1333)*JGrzDi + (0.0333)*JGrzSp)/(JGrzDi+JGrzSp);
  if isnan(fdZ)==1
  fdZ=0;
  end
- JLysZPON = fdZ*JLysZ;
- JLysZDON = (1-bio.fLab)*(1-fdZ)*JLysZ;
- JLysZDIN = (bio.fLab)*(1-fdZ)*JLysZ;
+ JlZPON = fdZ*JlZ;
+ JlZDON = (1-bio.fLab)*(1-fdZ)*JlZ;
+ JlZDIN = (bio.fLab)*(1-fdZ)*JlZ;
 
  % Diatom Silica cycle
  %%%%%%%%%%%%%%%%%%%%%
@@ -292,7 +293,7 @@
  JNH4Sp = vSpNH4/vSpTot * JPhotoSp;
  
  % Production of NH4 by Spatom Lysis - equivalent to loss to DIC in BEC
- JNH4Lys =  JLysDiDIN + JLysSpDIN + JLysZDIN;
+ JNH4Lys =  JLysDiDIN + JLysSpDIN + JlZDIN;
  % Production of NH4 by Grazing - equivalent to loss to DIC in BEC
  JNH4Grz = JGrzDiDIN + JGrzSpDIN;
  % Production of NH4 by DON - AFTER DON section
@@ -347,11 +348,11 @@
  % DON and DOFe cycles
  %%%%%%%%%%%%%%%%%%%%% 
  % DON production
- JProdDON = JLysDiDON + JLysSpDON + JLysZDON +JGrzDiDON + JGrzSpDON;
+ JProdDON = JLysDiDON + JLysSpDON + JlZDON +JGrzDiDON + JGrzSpDON;
  % DON Remineralization
  JRemDON = bio.rDOM * var.DON;
  % DOFe productiom
- JProdDOFe = QFeNDi * (JLysDiDON + JLysSpDON + JLysZDON +JGrzDiDON + JGrzSpDON); 
+ JProdDOFe = QFeNDi * (JLysDiDON +JGrzDiDON) + QFeNSp*(JLysSpDON  + JGrzSpDON) + bio.rFeNZ*JlZDON ; 
  % DOFe remineralization
  JRemDOFe = bio.rDOM * var.DOFe;
 
@@ -359,9 +360,9 @@
  % PON, POFe and PSi cycles
  %%%%%%%%%%%%%%%%%%%%%%%%%%
  % PON production
- JProdPON = JLysDiPON + JLysSpPON + JLysZPON +JAggDi +JAggSp + JGrzDiPON + JGrzSpPON;
+ JProdPON = JLysDiPON + JLysSpPON + JlZPON +JAggDi +JAggSp + JGrzDiPON + JGrzSpPON;
  % POFe production
- JProdPOFe = QFeNDi * (JLysDiPON + JLysSpPON + JLysZPON + JAggDi +JAggSp + JGrzDiPON + JGrzSpPON) + 0.1 * JScFe;
+ JProdPOFe = QFeNDi * (JLysDiPON + JAggDi + JGrzDiPON) + 0.1 * JScFe + QFeNSp*(JLysSpPON +JAggSp + JGrzSpPON) +  bio.rFeNZ*JlZPON  ;
  % PSi production
  % For grazed diatom Si, 50% is remineralized
  JProdPSi = QSiNDi * (0.5 * JGrzDi + JAggDi + 0.05 * JLysDi);
@@ -439,7 +440,7 @@
  dSidt = - gQSiNDi * JPhotoDi + bio.iRcy * (JSiGrz + JSiLys + JRemPSi);  
  dFedt = - gQFeNDi * JPhotoDi - gQFeNSp * JPhotoSp + bio.iRcy * (JRemDOFe + JRemPOFe + (QFeNDi+QFeNSp) * (JNH4Lys + JNH4Grz) + JGrzDiFe + JGrzSpFe) - JScFe;
  % Zooplankton 
- dZNdt=JGrzZDi + JGrzZSp - JLysZ;
+ dZNdt=JGrzZDi + JGrzZSp - JlZ;
  % Diatoms
  dDiNdt = JPhotoDi - (JGrzDi + JLysDi + JAggDi);
  dDiFedt = gQFeNDi * JPhotoDi - QFeNDi * (JGrzDi + JLysDi + JAggDi);

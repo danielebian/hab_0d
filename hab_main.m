@@ -74,7 +74,7 @@
  
  %mass conservation
 
-mass=hab.Sol.NO3 + hab.Sol.NH4 + hab.Sol.DiN + hab.Sol.DON + hab.Sol.PON; 
+mass=hab.Sol.NO3 + hab.Sol.NH4 + hab.Sol.DiN + hab.Sol.DON + hab.Sol.PON + hab.Sol.SpN + hab.Sol.ZN;
 figure
 plot(mass)
 

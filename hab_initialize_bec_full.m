@@ -1,4 +1,4 @@
- function BioPar = hab_initialize_bec_diat(BioPar,ExpModule)
+ function BioPar = hab_initialize_bec_full(BioPar,ExpModule)
 
  % Sets initial and boundary conditions for biological variables 
  % Distinguishes between the various physical setups
