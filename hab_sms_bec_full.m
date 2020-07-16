@@ -62,7 +62,7 @@
  % Photosynthesis rate:
  % Differentiate culture case (constant light) from Mixed Layer case (depth-dependent light)
  switch hab.ExpModule
- case 'mixed_layer'
+ case {'mixed_layer','mixed_layer_3D'}
     % In this case PAR represents light at the surface of the ML
     % Growth need to be averaged over the mixed layer
     %-----------------------
@@ -415,7 +415,7 @@
  % Sinking is just a removal term, assuming a constant sinking speed averaged over the ML.
  % All particle components are assumed to sink at the same rate, given by wSink/MLD (1/time)
  switch hab.ExpModule
- case 'mixed_layer'
+ case {'mixed_layer','mixed_layer_3D'}
     sinkRate = bio.wsPOM/evar.MLD;
     sinkPON  = var.PON  * sinkRate;
     sinkPOFe = var.POFe * sinkRate;

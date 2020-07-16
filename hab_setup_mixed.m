@@ -1,4 +1,4 @@
- function hab = hab_setup_mixed(hab,varargin)
+ function hab = hab_setup_mixed(hab,varargin,file)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HAB_0D initialization of experiment setup
 % Versions: 0.1 : D. Bianchi, A. Moreno, 11-13-2019
@@ -32,10 +32,11 @@
 
  %-------------------------------
  % Define the type and properties of surface light forcing
- SetUp.iLight = 4;	% 1: Constant light 
+ SetUp.iLight = 5;	% 1: Constant light 
 			% 2: 12:12 light:darkness cycles
 			% 3: Idealized annual cycle (mid-high latitudes)
 			% 4: Observed cycle (California Current)
+            % 5: 3D BEC
  % Parameters:
  SetUp.MaxPAR = 120;  	% (iLight=1,2) Max PAR 
 			% PAR: Photosynthetially Available Radiation umol/m2/s 
@@ -46,9 +47,10 @@
 
  %-------------------------------
  % Define the type and properties of ML temperature 
- SetUp.iTemp = 3;	% 1: Constant temperature 
+ SetUp.iTemp = 4;	% 1: Constant temperature 
 			% 2: Idealized annual cycle
 			% 3: Observed cycle (California Current)
+            % 4: 3D BEC
  % Parameters:
  SetUp.TempRef = 15;  		% (iTemp=1) Temperature for case 1
  % For case 3, Idealized annual cycle:
@@ -58,9 +60,10 @@
 
  %-------------------------------
  % Define the type and properties of MLD dynamics
- SetUp.iMLD =3;	% 1: Constant MLD
+ SetUp.iMLD =4;	% 1: Constant MLD
 			% 2: Idealized annual cycle
 			% 3: Observed cycle (California Current)
+            % 4: 3D BEC
  % Parameters:
  SetUp.MLD0 = 40;  		% (iMLD=1) Mixed layer depth (m)
  SetUp.day_min_MLD = 265;	% (iMLD=2) Day of the year with minimum MLD (e.g. Sept. 21st)
@@ -69,9 +72,9 @@
 
  %-------------------------------
  % Define the type and properties of mixing/upwelling flow
- SetUp.iFlow = 2;	% 1: constant flow
-                        % 2: idealized cycle
-			% 3: Observed cycle (California Current)
+ SetUp.iFlow = 3;	% 1: constant flow
+                    % 2: idealized cycle
+                    % 3: 3D BEC
  SetUp.Flow0 = 100;  		% (iFlow=1) Rate of water flow at base of ML (m/y) (typically 100-1000?)
  SetUp.day_min_Flow = 152;	% (iFlow=2) Day of the year with minimum Flow (June 1)
  SetUp.Flow_min = 0;		% (iFlow=2) Flow (m/y)
@@ -141,6 +144,12 @@
     %int_mode = 'linear';
     int_mode = 'pchip';
     SetUp.Env.Temp = interpolate_annual_cycle_to_model(time0,Temp0,SetUp.time,int_mode);
+ case 4
+    load(char(file))
+    time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
+    Temp0 = var1d.temp;
+    int_mode = 'pchip';
+    SetUp.Env.Temp = interpolate_annual_cycle_to_model(time0,Temp0,SetUp.time,int_mode);
  otherwise
     error(['Crazy Town! Temperature Off!']);
  end
@@ -202,6 +211,12 @@
     %int_mode = 'linear';
     int_mode = 'pchip';
     SetUp.Env.PAR = interpolate_annual_cycle_to_model(time0,PAR0,SetUp.time,int_mode);
+ case 5
+    load(char(file))
+    time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
+    PAR0 = var1d.PARinc;
+    int_mode = 'pchip';
+    SetUp.Env.PAR = interpolate_annual_cycle_to_model(time0,PAR0,SetUp.time,int_mode);
  otherwise
     error(['Crazy Town! Lights Off!']);
  end
@@ -249,6 +264,12 @@
     % Iterpolation step: interpolate annual cycle onto model time vector
     % including repetiton if multiple years are required
     %int_mode = 'linear';
+    int_mode = 'pchip';
+    SetUp.Env.MLD = interpolate_annual_cycle_to_model(time0,MLD0,SetUp.time,int_mode);
+ case 4
+    load(char(file))
+    time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
+    MLD0 = abs(var1d.mld);
     int_mode = 'pchip';
     SetUp.Env.MLD = interpolate_annual_cycle_to_model(time0,MLD0,SetUp.time,int_mode);
  otherwise
@@ -319,6 +340,27 @@
     %int_mode = 'linear';
     int_mode = 'pchip';
     SetUp.Env.Flow = interpolate_annual_cycle_to_model(time0,Flow0,SetUp.time,int_mode);
+case 3
+    load(char(file))
+    time0 = [15 44 74 104 135 165 196 227 257 288 318 349];
+    Flow0 = var1d.flow_in/1000;
+    % Conversion here from m/year to m/hour:
+    Flow0 = Flow0/365/24;
+    int_mode = 'pchip';
+    SetUp.Env.Flow = interpolate_annual_cycle_to_model(time0,Flow0,SetUp.time,int_mode);
+    
+    nvar = hab.BioPar.nvar;        % number of model state variables
+    
+    for indv=1:nvar
+        InVar = hab.BioPar.([hab.BioPar.varnames{indv} '_in']);
+        
+        if length(InVar)==1
+            InVar=ones(1,12)*InVar;
+        end
+            
+        hab.BioPar.([hab.BioPar.varnames{indv} '_in']) = interpolate_annual_cycle_to_model(time0,InVar,SetUp.time,int_mode);
+    end
+    
  otherwise
     error(['Crazy Town! Flow not specified!']);
  end

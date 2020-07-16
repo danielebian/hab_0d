@@ -31,7 +31,7 @@
  BioPar.iRcy = 1;
 
  % Sinking velocity per POM (for mixed layer case only)
- BioPar.iwsPOM = 1;         % add 0 to test conservation of mass
+ BioPar.iwsPOM = 1;        	% add 0 to test conservation of mass
  BioPar.wsPOM = 25/24;		% sinking velocity in m/h (typically 25 m/d)
  
  % Stoichiometric ratios

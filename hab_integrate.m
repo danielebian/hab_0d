@@ -31,7 +31,7 @@
  % For chemostat/ML case, set vector of inflow concentrations 
  % (one input concentration per variable, set as constant over time)
  for indv=1:nvar
-    InVar(indv,1) = hab.BioPar.([hab.BioPar.varnames{indv} '_in']);
+    InVar(indv,:) = hab.BioPar.([hab.BioPar.varnames{indv} '_in']);
  end
 
  for indt=2:ntime
@@ -69,6 +69,12 @@
        % (i.e. mixing or upwelling) following formulation of Evan and Parslow, 1985
        % For simplicity, uses a seprate function
        sms_phys = hab_sms_mixed_layer(hab,AllVar(:,indt-1),EnvVar(:,indt),InVar);
+    case 'mixed_layer_3D'
+       % For the mixed layer case, calculate the sources and sinks due to
+       % dilution by deepening of the mixed layer, and by flow through the mixed layer
+       % (i.e. mixing or upwelling) following formulation of Evan and Parslow, 1985
+       % For simplicity, uses a seprate function
+       sms_phys = hab_sms_mixed_layer(hab,AllVar(:,indt-1),EnvVar(:,indt),InVar(:,indt));
     otherwise
        error(['Crazy town! (physical SMS case not found)']);
     end

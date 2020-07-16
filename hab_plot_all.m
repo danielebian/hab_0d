@@ -1,4 +1,4 @@
- function hab_plot_tersel(hab);
+ function hab_plot_all(hab);
 
  Tstart = 0;
  Tend = hab.Sol.time(end)/24;

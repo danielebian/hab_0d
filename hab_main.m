@@ -29,7 +29,7 @@
  % 'mixed_layer' : models a mixed layer setup
 %   hab.ExpModule = 'batch';
  %hab.ExpModule = 'chemostat';
- hab.ExpModule = 'mixed_layer';
+ hab.ExpModule = 'mixed_layer_3D';
 
  % Here, if needed, overrides default parameters for BioModules and SetUp
  % The experiment will adopt these parameters, overriding defaults
@@ -56,11 +56,14 @@
  % Setup experiment type (e.g. batch, chemostat, etc.)
  switch hab.ExpModule
  case 'batch'
-    hab = hab_setup_batch(hab,new_SetUp{:});
+    hab = hab_setup_batch(hab,new_SetUp{:},'');
  case 'chemostat'
-    hab = hab_setup_chemo(hab,new_SetUp{:});
+    hab = hab_setup_chemo(hab,new_SetUp{:},'');
  case 'mixed_layer'
-    hab = hab_setup_mixed(hab,new_SetUp{:});
+    hab = hab_setup_mixed(hab,new_SetUp{:},'');
+ case 'mixed_layer_3D'
+    file={'./forcings/monthly_[34.16.35.24]_[-123.95.-121.39].mat'};
+    hab = hab_setup_mixed(hab,new_SetUp,file);
  otherwise
     error(['Crazy town! (experiment case not found)']);
  end
@@ -72,14 +75,8 @@
  hab = hab_postprocess(hab);
  
  
- %mass conservation
-
-mass=hab.Sol.NO3 + hab.Sol.NH4 + hab.Sol.DiN + hab.Sol.DON + hab.Sol.PON + hab.Sol.SpN + hab.Sol.ZN;
-figure
-plot(mass)
-
  % Plotting
- iplot = 1;
+ iplot = 0;
  if (iplot)
     switch hab.BioModule
     case 'anderson'
@@ -96,10 +93,21 @@ plot(mass)
        error(['Crazy town! (Processing not found)']);
     end
  end
+ 
+  % Plotting diagnostic for mixed_layer_3D
+ switch hab.ExpModule
+ case 'mixed_layer_3D'
+    load(char(file))
+    hab_plot_diagn(hab,var1d); %Plot model    
+ end
+ 
+%mass conservation
 
+mass=hab.Sol.NO3 + hab.Sol.NH4 + hab.Sol.DiN + hab.Sol.DON + hab.Sol.PON + hab.Sol.SpN + hab.Sol.ZN;
+figure
+plot(mass)
 
-
-%peaks year 2-3
+ %peaks year 2-3
 
 time=datenum(2001,1,1,hab.SetUp.time,0,0);
 
