@@ -1,4 +1,4 @@
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Template HAB_0D runscript 
 % Versions: 0.1 : D. Bianchi, A. Moreno, 11-13-2019
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -8,6 +8,7 @@
 
  % Adds path for local functions
  addpath ./functions
+ addpath ../matlab_scripts
 
  % Initialize the model
  clear hab;
@@ -27,9 +28,10 @@
  % 'batch' : models a batch culture
  % 'chemostat' : models a chemostat setup
  % 'mixed_layer' : models a mixed layer setup
-%   hab.ExpModule = 'batch';
- %hab.ExpModule = 'chemostat';
- hab.ExpModule = 'mixed_layer_3D';
+%   hab.ExpModule = 'batch'; hab.file = '';
+ %hab.ExpModule = 'chemostat'; hab.file = '';
+ %hab.ExpModule = 'mixed_layer'; hab.file = '';
+ hab.ExpModule = 'mixed_layer_3D'; hab.file = './forcings/usw42_MONTHLY_1997_2007_lat_31_44_lon_-136_-115.mat';
 
  % Here, if needed, overrides default parameters for BioModules and SetUp
  % The experiment will adopt these parameters, overriding defaults
@@ -56,14 +58,13 @@
  % Setup experiment type (e.g. batch, chemostat, etc.)
  switch hab.ExpModule
  case 'batch'
-    hab = hab_setup_batch(hab,new_SetUp{:},'');
+    hab = hab_setup_batch(hab,new_SetUp{:});
  case 'chemostat'
-    hab = hab_setup_chemo(hab,new_SetUp{:},'');
+    hab = hab_setup_chemo(hab,new_SetUp{:});
  case 'mixed_layer'
-    hab = hab_setup_mixed(hab,new_SetUp{:},'');
+    hab = hab_setup_mixed(hab,new_SetUp{:});
  case 'mixed_layer_3D'
-    file={'./forcings/monthly_[34.16.35.24]_[-123.95.-121.39].mat'};
-    hab = hab_setup_mixed(hab,new_SetUp,file);
+    hab = hab_setup_mixed_3D(hab,new_SetUp{:});
  otherwise
     error(['Crazy town! (experiment case not found)']);
  end
@@ -97,60 +98,70 @@
   % Plotting diagnostic for mixed_layer_3D
  switch hab.ExpModule
  case 'mixed_layer_3D'
-    load(char(file))
-    hab_plot_diagn(hab,var1d); %Plot model    
+    hab_plot_diagn(hab,'bmod_const'); %Plot model    
  end
  
-%mass conservation
+ %mass conservation
+ imass = 0;
+ if (imass)
+     mass=hab.Sol.NO3 + hab.Sol.NH4 + hab.Sol.DiN + hab.Sol.DON + hab.Sol.PON + hab.Sol.SpN + hab.Sol.ZN;
+     scrsz = get(0,'ScreenSize'); % left, bottom, width, height
+figure('position',[1 scrsz(4)/100 scrsz(3) scrsz(4)],'visible','off');
+     plot(mass)
+ur8=['/home/marcsandovalb/hab_0d/figures/mass_conservation'];
+set(gcf,'color','w');
+img = getframe(gcf);
+imwrite(img.cdata, [ur8, '.png']);
 
-mass=hab.Sol.NO3 + hab.Sol.NH4 + hab.Sol.DiN + hab.Sol.DON + hab.Sol.PON + hab.Sol.SpN + hab.Sol.ZN;
-figure
-plot(mass)
+ end
+ 
+ %Peaks year 2-3
 
- %peaks year 2-3
-
-time=datenum(2001,1,1,hab.SetUp.time,0,0);
-
-figure
-subplot 611
-plot(time((24*365 +1):2*(24*365)),hab.Sol.NO3((24*365 +1):2*(24*365)))
-hold on
-plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.NO3(2*(24*365) +1:3*(24*365)))
-title('NO3')
-grid on
-datetick('x','m')
-subplot 612
-plot(time((24*365 +1):2*(24*365)),hab.Sol.DiChl((24*365 +1):2*(24*365)))
-hold on
-plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.DiChl(2*(24*365) +1:3*(24*365)))
-title('DiChl')
-grid on
-datetick('x','m')
-subplot 613
-plot(time((24*365 +1):2*(24*365)),hab.Sol.DiN((24*365 +1):2*(24*365)))
-hold on
-plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.DiN(2*(24*365) +1:3*(24*365)))
-title('DiN')
-grid on
-datetick('x','m')
-subplot 614
-plot(time((24*365 +1):2*(24*365)),hab.Sol.ZN((24*365 +1):2*(24*365)))
-hold on
-plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.ZN(2*(24*365) +1:3*(24*365)))
-title('ZN')
-grid on
-datetick('x','m')
-subplot 615
-plot(time((24*365 +1):2*(24*365)),hab.SetUp.Env.Flow((24*365 +1):2*(24*365)))
-hold on
-plot(time(2*(24*365) +1:3*(24*365)),hab.SetUp.Env.Flow(2*(24*365) +1:3*(24*365)))
-title('Flow')
-grid on
-datetick('x','m')
-subplot 616
-plot(time((24*365 +1):2*(24*365)),hab.SetUp.Env.MLD((24*365 +1):2*(24*365)))
-hold on
-plot(time(2*(24*365) +1:3*(24*365)),hab.SetUp.Env.MLD(2*(24*365) +1:3*(24*365)))
-set(gca,'ydir','reverse')
-title('MLD')
-datetick('x','m')
+ ipeaks=0;
+ if (ipeaks)
+     time=datenum(2001,1,1,hab.SetUp.time,0,0);
+     
+     figure
+     subplot 611
+     plot(time((24*365 +1):2*(24*365)),hab.Sol.NO3((24*365 +1):2*(24*365)))
+     hold on
+     plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.NO3(2*(24*365) +1:3*(24*365)))
+     title('NO3')
+     grid on
+     datetick('x','m')
+     subplot 612
+     plot(time((24*365 +1):2*(24*365)),hab.Sol.DiChl((24*365 +1):2*(24*365)))
+     hold on
+     plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.DiChl(2*(24*365) +1:3*(24*365)))
+     title('DiChl')
+     grid on
+     datetick('x','m')
+     subplot 613
+     plot(time((24*365 +1):2*(24*365)),hab.Sol.DiN((24*365 +1):2*(24*365)))
+     hold on
+     plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.DiN(2*(24*365) +1:3*(24*365)))
+     title('DiN')
+     grid on
+     datetick('x','m')
+     subplot 614
+     plot(time((24*365 +1):2*(24*365)),hab.Sol.ZN((24*365 +1):2*(24*365)))
+     hold on
+     plot(time(2*(24*365) +1:3*(24*365)),hab.Sol.ZN(2*(24*365) +1:3*(24*365)))
+     title('ZN')
+     grid on
+     datetick('x','m')
+     subplot 615
+     plot(time((24*365 +1):2*(24*365)),hab.SetUp.Env.Flow((24*365 +1):2*(24*365)))
+     hold on
+     plot(time(2*(24*365) +1:3*(24*365)),hab.SetUp.Env.Flow(2*(24*365) +1:3*(24*365)))
+     title('Flow')
+     grid on
+     datetick('x','m')
+     subplot 616
+     plot(time((24*365 +1):2*(24*365)),hab.SetUp.Env.MLD((24*365 +1):2*(24*365)))
+     hold on
+     plot(time(2*(24*365) +1:3*(24*365)),hab.SetUp.Env.MLD(2*(24*365) +1:3*(24*365)))
+     set(gca,'ydir','reverse')
+     title('MLD')
+     datetick('x','m')
+ end

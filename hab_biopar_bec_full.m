@@ -16,9 +16,6 @@
                     'SpN','SpFe','SpChl'};
  BioPar.nvar = length(BioPar.varnames);
 
- % Initialize biogeochemical variables (initial and boundary conditions)
- BioPar = hab_initialize_bec_full(BioPar,hab.ExpModule);
-
  % Constants
  y2d = 365;
  d2h = 24;
@@ -32,7 +29,7 @@
 
  % Sinking velocity per POM (for mixed layer case only)
  BioPar.iwsPOM = 1;        	% add 0 to test conservation of mass
- BioPar.wsPOM = 25/24;		% sinking velocity in m/h (typically 25 m/d)
+ BioPar.wsPOM = BioPar.iwsPOM*(25/24);		% sinking velocity in m/h (typically 25 m/d)
  
  % Stoichiometric ratios
  BioPar.rPC = 0.00855;      			% stoichiometric ratio for PN P:C (Redfield = 1/106)
@@ -128,6 +125,9 @@
  % Here performs any substitution of default parameters based on user input (varargin)
  BioPar = parse_pv_pairs(BioPar,varargin);
  %--------------------------------------------------------------------------------
+ 
+  % Initialize biogeochemical variables (initial and boundary conditions)
+ BioPar = hab_initialize_bec_full(BioPar,hab.ExpModule,hab.file);
 
  % Adds in the biological parameters in the main structure
  hab.BioPar = BioPar;
